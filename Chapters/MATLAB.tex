@@ -15,9 +15,13 @@ dir_data([dir_data.isdir]) = [];  % 去除所有文件夹
 
 方便归方便，但是，一来肯定有大多数人使用的是MATLAB 2016b之前的版本，二来，解放大脑意味着我失去了一次独立思考的机会。
 
-对于实现方法，多层次的遍历，我们第一时间想到的肯定是递归。其次是数据的存储，\Matlabinline|dir()|函数返回的是一个struct，我们要充分利用这个数据结构。所以现在思路是，写一个递归函数，这个函数返回包含所以文件的struct。
+\subsection*{思考}
+
+对于实现方法\footnote{思路来源：\href{https://stackoverflow.com/questions/2652630/how-to-get-all-files-under-a-specific-directory-in-matlab}{How to get all files under a specific directory in MATLAB?}}，多层次的遍历，我们第一时间想到的肯定是递归。其次是数据的存储，\Matlabinline|dir()|函数返回的是一个struct，我们要充分利用这个数据结构。所以现在思路是，写一个递归函数，这个函数返回包含所以文件的struct。
 
 这个函数应对先处理父文件夹，获取文件和文件夹，然后获取子文件夹，我们对获取的子文件夹再次调用该函数，最后函数返回存储有所有文件信息的struct。现在，你可以对这个结构体做你想做的事情。
+
+\subsection*{解}
 
 \begin{Matlabcode}
 function file_list = get_all_file_name(path)
@@ -37,5 +41,7 @@ function file_list = get_all_file_name(path)
 end
 \end{Matlabcode}
 
-\subsection{关于效率}
+\subsection*{关于效率}
 \Matlabinline|dir()|函数遍历整个F盘文件大约需要1.555823s。我们实现的递归函数遍历F盘文件大约需要3.703009s。慢是慢了点，但我们成功运用了递归解决问题，不是吗？
+
+\section{title}

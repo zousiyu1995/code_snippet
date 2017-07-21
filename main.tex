@@ -1,19 +1,26 @@
 \documentclass[oneside]{book}
 
 \usepackage{xcolor}
+
 %% 中文文字处理
 \colorlet{title}{blue!40!black}
 \usepackage[UTF8, heading = true]{ctex}
     \ctexset{today = old}
-    \pagestyle{plain}
+    \pagestyle{plain}  % 自定义板式
     %% 标题设置
     \ctexset{
+        chapter = {
+            pagestyle = chapterpage,
+        },
         section = {
             name = {问题},
             format = \sffamily\raggedright\color{title}\zihao{4},
             numberformat = \rmfamily,
             number = \arabic{section},
-        }
+        },
+        subsection = {
+            format = \sffamily\raggedright\color{title}\zihao{5},
+        },
     }%
 
 %% 字体设置
@@ -49,8 +56,56 @@
     %% 行内代码
     \newmintinline{Matlab}{}
 
+%% 页眉页脚
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+    \fancyhead{}
+        \lhead{\kaishu\nouppercase{\leftmark}}
+        \rhead{\thepage}
+    \fancyfoot{}
+% 章标题所在页专用版式
+\fancypagestyle{chapterpage}{%
+    \chead{\slshape\leftmark}
+    \lhead{\sffamily 代码笔记本}
+    \rhead{\thepage}
+}
+
+%% 脚注，带圈数字，刘海洋，可以超过10
+\usepackage{xunicode-addon}
+\newfontfamily\fnmarkfont{ipag.ttf} % 带圈 0 到 20 被认做西文符号
+\newCJKfontfamily\fnCJKmarkfont{ipag.ttf} % 带圈数字超过 20 是 CJK 符号
+\renewcommand\thefootnote{
+    {\fnmarkfont\fnCJKmarkfont\textcircled{\arabic{footnote}}}
+}
+
 %% 自定义命令
-\newcommand*{\solution}{\noindent\textsf{\zihao{4}\color{title}解}}
+
+%% 超链接
+\usepackage{hyperref}
+    \hypersetup{%
+        bookmarksopen=true,  % 展开书签
+        bookmarksnumbered=true,  % 显示书签编号
+        bookmarksopenlevel=1,
+        unicode=true,  % 使书签支持unicode字符
+        %链接、颜色
+        breaklinks=true,  % 链接自动换行
+        colorlinks=true,  % 加颜色区分链接
+        citecolor=black,  % 文献序号颜色
+    }
+    %定制pdf属性
+    \hypersetup{%
+        pdftitle={代码笔记本},
+        pdfauthor={邹思宇},
+        pdfkeywords={LaTeX, PGFplot, Tikz, MATLAB, C, Python},
+        pdfstartview=Fit,%整个页面适合窗口
+        pdfcreator={XeLaTeX \& TeXStudio}
+    }%
+
+
+%% url样式
+\newfontfamily\urlfont{PT Sans Narrow}
+\def\UrlFont{\urlfont}
+\urlstyle{urlfont}
 
 \begin{document}
     \frontmatter
