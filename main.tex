@@ -1,0 +1,62 @@
+\documentclass[oneside]{book}
+
+\usepackage{xcolor}
+%% 中文文字处理
+\colorlet{title}{blue!40!black}
+\usepackage[UTF8, heading = true]{ctex}
+    \ctexset{today = old}
+    \pagestyle{plain}
+    %% 标题设置
+    \ctexset{
+        section = {
+            name = {问题},
+            format = \sffamily\raggedright\color{title}\zihao{4},
+            numberformat = \rmfamily,
+            number = \arabic{section},
+        }
+    }%
+
+%% 字体设置
+\usepackage{fontspec}
+    \setmainfont{TeX Gyre Pagella}
+    \setsansfont{TeX Gyre Heros}
+    \setmonofont{DejaVu Sans Mono}  % Consolas
+    \setCJKmainfont[BoldFont={SimHei},ItalicFont={KaiTi}]{Source Han Serif SC}
+    \setCJKmonofont{FangSong}
+    \setCJKsansfont{Source Han Sans HW SC}
+
+%% 数学字体
+\usepackage{unicode-math}
+    \setmathfont[
+        math-style = ISO,
+        bold-style = ISO
+        ]{TeX Gyre Pagella Math}
+
+\usepackage{geometry}
+    \geometry{paper=a4paper,
+        hmargin=2cm,
+        vmargin=2cm,
+        marginparwidth=2.5cm,
+    }%
+
+%% 代码展示
+\definecolor{bg}{rgb}{0.95, 0.95, 0.95}
+
+\usepackage[newfloat=true]{minted}
+    \usemintedstyle{colorful}
+    \newminted{Matlab}{bgcolor=bg, breaklines=true}  % Matlabcode环境
+    \newminted{python}{bgcolor=bg}
+    %% 行内代码
+    \newmintinline{Matlab}{}
+
+%% 自定义命令
+\newcommand*{\solution}{\noindent\textsf{\zihao{4}\color{title}解}}
+
+\begin{document}
+    \frontmatter
+    
+    \mainmatter
+    \input{Chapters/introduction}
+    \input{Chapters/MATLAB}
+    \backmatter
+\end{document}
