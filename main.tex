@@ -19,7 +19,7 @@
             number = \arabic{section},
         },
         subsection = {
-            format = \sffamily\raggedright\color{title}\zihao{5},
+            format = \rmfamily\heiti\raggedright\color{title}\zihao{5},
         },
     }%
 
@@ -55,6 +55,8 @@
     \newminted{python}{bgcolor=bg}
     %% 行内代码
     \newmintinline{Matlab}{}
+    %% 格式化文件
+    \newmintedfile{Matlab}{bgcolor=bg, breaklines=true}
 
 %% 页眉页脚
 \usepackage{fancyhdr}
@@ -111,7 +113,7 @@
     \frontmatter
     
     \mainmatter
-    \input{Chapters/introduction}
-    \input{Chapters/MATLAB}
+    \input{chapters/introduction}
+    \input{chapters/MATLAB}
     \backmatter
 \end{document}
