@@ -4,7 +4,7 @@
 
 假设现在我们有这样一个文件夹A，它含有一些文件和子文件夹B、C、D......我们需要将这个父文件夹（A）及其子文件夹（B、C、D......）中的所有文件名和其路径取出来。
 
-如果你用的是MATLAB 2016b及其后面的版本，那真的太棒了！\Matlabinline|dir()|函数已经支持遍历搜索了。尝试敲入，
+如果你用的是MATLAB 2016b及其后面的版本，那真的太棒了！\Matlabinline|dir()|函数已经支持遍历搜索了。尝试敲入：
 
 \begin{Matlabcode}
 dir_data = dir('**/*');
@@ -23,9 +23,11 @@ dir_data([dir_data.isdir]) = [];  % 去除所有文件夹
 
 \subsection*{解}
 
+在获取子文件夹的过程中，我们需要去除`.'和`..'这两个特殊的文件夹。
+
 \Matlabfile[firstline=2]{code/get_all_file_name.m}
 
-\subsection*{关于效率}
-\Matlabinline|dir()|函数遍历整个F盘文件大约需要1.555823s。我们实现的递归函数遍历F盘文件大约需要3.703009s。慢是慢了点，但我们成功运用了递归解决问题，不是吗？
+\subsection*{总结}
+\Matlabinline|dir()|函数遍历整个F盘共2万余文件文件大约需要1.555823s。我们实现的递归函数遍历F盘文件大约需要3.703009s。慢是慢了点，但我们成功运用了递归解决问题，不是吗？
 
-\section{title}
+\section{title中英文标题}
