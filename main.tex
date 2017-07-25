@@ -25,9 +25,9 @@
 
 %% 字体设置
 \usepackage{fontspec}
-    \setmainfont{TeX Gyre Pagella}
+    \setmainfont{Adobe Garamond Pro}  % TeX Gyre Pagella
     \setsansfont{TeX Gyre Heros}
-    \setmonofont{DejaVu Sans Mono}  % Consolas
+    \setmonofont{Source Code Pro}  % Consolas, DejaVu Sans Mono
     \setCJKmainfont[BoldFont={SimHei},ItalicFont={KaiTi}]{Source Han Serif SC}
     \setCJKmonofont{FangSong}
     \setCJKsansfont{Source Han Sans HW SC}
@@ -57,6 +57,9 @@
     \newmintinline{Matlab}{}
     %% 格式化文件
     \newmintedfile{Matlab}{bgcolor=bg, breaklines=true}
+
+%% 算法展示
+\usepackage[lined]{algorithm2e}
 
 %% 页眉页脚
 \usepackage{fancyhdr}
