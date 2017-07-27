@@ -1,10 +1,14 @@
 \documentclass[oneside]{book}
 
+%% 必须的包
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
 \usepackage{xcolor}
 
 %% 中文文字处理
 \colorlet{title}{blue!40!black}
-\usepackage[UTF8, heading = true]{ctex}
+\usepackage[heading = true]{ctex}
     \ctexset{today = old}
     \pagestyle{plain}  % 自定义板式
     %% 标题设置
@@ -28,9 +32,9 @@
     \setmainfont{Adobe Garamond Pro}  % TeX Gyre Pagella
     \setsansfont{TeX Gyre Heros}
     \setmonofont{Source Code Pro}  % Consolas, DejaVu Sans Mono
-    \setCJKmainfont[BoldFont={SimHei},ItalicFont={KaiTi}]{Source Han Serif SC}
+    \setCJKmainfont[BoldFont={Source Han Sans SC}, ItalicFont={KaiTi}]{Source Han Serif SC}
     \setCJKmonofont{FangSong}
-    \setCJKsansfont{Source Han Sans HW SC}
+    \setCJKsansfont{Source Han Sans SC}
 
 %% 数学字体
 \usepackage{unicode-math}
@@ -41,9 +45,9 @@
 
 \usepackage{geometry}
     \geometry{paper=a4paper,
-        hmargin=2cm,
-        vmargin=2cm,
-        marginparwidth=2.5cm,
+        hmargin = 3cm,
+        vmargin = 2cm,
+        marginparwidth = 2.5cm,
     }%
 
 %% 代码展示
@@ -53,13 +57,16 @@
     \usemintedstyle{colorful}
     \newminted{Matlab}{bgcolor=bg, breaklines=true}  % Matlabcode环境
     \newminted{python}{bgcolor=bg}
+    \newminted{TeX}{bgcolor=bg, breaklines=true}
     %% 行内代码
     \newmintinline{Matlab}{}
     %% 格式化文件
     \newmintedfile{Matlab}{bgcolor=bg, breaklines=true}
 
 %% 算法展示
-\usepackage[lined]{algorithm2e}
+\usepackage[lined, algoruled, algochapter]{algorithm2e}
+    \SetKwProg{Function}{Function}{:}{end}
+
 
 %% 页眉页脚
 \usepackage{fancyhdr}
@@ -83,7 +90,14 @@
     {\fnmarkfont\fnCJKmarkfont\textcircled{\arabic{footnote}}}
 }
 
+\usepackage{enumitem}%列表
+    \setlist[itemize]{%
+        nosep,
+        leftmargin=\parindent,
+}
+
 %% 自定义命令
+\newcommand*{\algoref}[1]{算法\ref{#1}}
 
 %% 超链接
 \usepackage{hyperref}
@@ -105,7 +119,6 @@
         pdfstartview=Fit,%整个页面适合窗口
         pdfcreator={XeLaTeX \& TeXStudio}
     }%
-
 
 %% url样式
 \newfontfamily\urlfont{PT Sans Narrow}

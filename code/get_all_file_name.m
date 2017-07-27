@@ -1,14 +1,14 @@
-% 获取全部文件夹内的文件
+% get all file name in current dir and sub dir
 function file_list = get_all_file_name(path)
     dir_data = dir(path);
-    file_list = dir_data(~[dir_data.isdir]);  % 当前文件夹下所有文件
+    file_list = dir_data(~[dir_data.isdir]);  % file name of current dir
     
-    % 获取子文件夹
+    % get sub dir information
     sub_dir = dir_data([dir_data.isdir]);  % struct
     dot_dir = ismember({sub_dir.name}, {'.', '..'});  % logical
-    sub_dir = sub_dir(~dot_dir);  % struct，不含特殊文件夹的所有子文件夹
+    sub_dir = sub_dir(~dot_dir);  % struct, remove specific folder
     
-    % 递归
+    % recursion
     for i = 1:length(sub_dir)
         next_dir = fullfile(sub_dir(i).folder, sub_dir(i).name);  % str
         file_list = [file_list; get_all_file_name(next_dir)];  % struct

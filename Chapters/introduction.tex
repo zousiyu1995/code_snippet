@@ -1,3 +1,38 @@
 \chapter*{导言}
 
-这里存放一些实际工作中碰到的实用的代码片段，可能包含MATLAB、Python、C和一些\LaTeX{}的小知识。
+这份文档主要用来存放一些实际工作中碰到的实用的代码片段，可能包含MATLAB、Python、C和一些\LaTeX{}的小知识。由于我是一个化学工程的学生，同时也初涉编程未深，计算机专业知识难免会出点错误，欢迎指正。
+
+如果有人想编译这份手册或想学习一下实现，请务必读以下说明。
+
+\textbf{字体设置}，为了避免侵权，尽可能使用开源字体\footnote{西文主字体Adobe Garamond Pro、楷体、仿宋暂时没有找到理想的替代方案}。
+
+\begin{itemize}
+\item Source Han Sans: \url{https://github.com/adobe-fonts/source-han-sans/tree/release}
+\item Source Han Serif: \url{https://github.com/adobe-fonts/source-han-serif/tree/release}
+\item Source Code Pro: \url{https://github.com/adobe-fonts/source-code-pro}
+\item PT Sans Narrow: \url{https://fonts.google.com/specimen/PT+Sans+Narrow}
+\item TeX Gyre: 有问题前往\url{https://www.ctan.org}获取，一般来说\TeX{}发行版自带
+\item 等宽字体：大多数等宽字体都是程序员使用的，开源居多，颇易获取。我常用DejaVu Sans Mono，Fira Code和Source Code Pro三种。
+\end{itemize}
+
+\begin{TeXcode}
+%% 字体设置
+\usepackage{fontspec}
+    \setmainfont{Adobe Garamond Pro}  % TeX Gyre Pagella
+    \setsansfont{TeX Gyre Heros}
+    \setmonofont{Source Code Pro}  % Consolas, DejaVu Sans Mono
+    \setCJKmainfont[BoldFont={Source Han Sans SC}, ItalicFont={KaiTi}]{Source Han Serif SC}
+    \setCJKmonofont{FangSong}
+    \setCJKsansfont{Source Han Sans SC}
+
+%% 数学字体
+\usepackage{unicode-math}
+    \setmathfont[math-style = ISO, bold-style = ISO]{TeX Gyre Pagella Math}
+
+%% url样式
+\newfontfamily\urlfont{PT Sans Narrow}
+\end{TeXcode}
+
+\textbf{编译环境设置}，代码高亮环境由minted宏包提供（需要Python环境）。
+
+\textbf{代码测试环境}，各种代码的运行环境为MATLAB 2017a、Anaconda 4.4.0（Python 3.6x）、Visual Studio 2017 community、MiK\TeX{} 2.9（各宏包均为最新）。
