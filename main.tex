@@ -45,23 +45,26 @@
 
 \usepackage{geometry}
     \geometry{paper=a4paper,
-        hmargin = 3cm,
+        hmargin = 2cm,
         vmargin = 2cm,
-        marginparwidth = 2.5cm,
     }%
 
 %% 代码展示
 \definecolor{bg}{rgb}{0.95, 0.95, 0.95}
 
-\usepackage[newfloat=true]{minted}
-    \usemintedstyle{colorful}
-    \newminted{Matlab}{bgcolor=bg, breaklines=true}  % Matlabcode环境
+\usepackage{minted}  % 启用浮动体支持[newfloat=true]
+    \usemintedstyle{colorful}  % 高亮主题
+    %% <language>code 环境
+    \newminted{Matlab}{bgcolor=bg, breaklines=true}
     \newminted{python}{bgcolor=bg}
     \newminted{TeX}{bgcolor=bg, breaklines=true}
-    %% 行内代码
+    %% <language>inline 行内代码
     \newmintinline{Matlab}{}
-    %% 格式化文件
+    \newmintinline{Python}{}
+    \newcommand*{\codeinline}[2]{~\mintinline{#1}{#2}~}
+    %% <language>file 格式化文件
     \newmintedfile{Matlab}{bgcolor=bg, breaklines=true}
+    \newmintedfile{python}{bgcolor=bg, breaklines=true}
 
 %% 算法展示
 \usepackage[lined, algoruled, algochapter]{algorithm2e}
