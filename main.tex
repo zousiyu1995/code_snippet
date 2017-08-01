@@ -1,0 +1,140 @@
+\documentclass[oneside]{book}
+
+%% 必须的包
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{xcolor}
+
+%% 中文文字处理
+\colorlet{title}{blue!40!black}
+\usepackage[heading = true]{ctex}
+    \ctexset{today = old}
+    \pagestyle{plain}  % 自定义板式
+    %% 标题设置
+    \ctexset{
+        chapter = {
+            pagestyle = chapterpage,
+        },
+        section = {
+            name = {问题},
+            format = \bf\raggedright\color{title}\zihao{4},
+            numberformat = \rmfamily,
+            number = \arabic{section},
+        },
+        subsection = {
+            format = \rmfamily\heiti\raggedright\color{title}\zihao{5},
+        },
+    }%
+
+%% 字体设置
+\usepackage{fontspec}
+    \setmainfont{Adobe Garamond Pro}  % TeX Gyre Pagella
+    \setsansfont{TeX Gyre Heros}
+    \setmonofont{Fira Code}  % Source Code Pro, Consolas, DejaVu Sans Mono
+    \setCJKmainfont[BoldFont={Source Han Sans SC}, ItalicFont={KaiTi}]{Source Han Serif SC}
+    \setCJKmonofont{Inziu Iosevka Slab SC}  % FangSong
+    \setCJKsansfont{Source Han Sans SC}
+
+%% 数学字体
+\usepackage{unicode-math}
+    \setmathfont[
+        math-style = ISO,
+        bold-style = ISO
+        ]{TeX Gyre Pagella Math}
+
+\usepackage{geometry}
+    \geometry{paper=a4paper,
+        hmargin = 2cm,
+        vmargin = 2cm,
+    }%
+
+%% 代码展示
+\definecolor{bg}{rgb}{0.95, 0.95, 0.95}
+
+\usepackage{minted}  % 启用浮动体支持[newfloat=true]
+    \usemintedstyle{colorful}  % 高亮主题
+    %% <language>code 环境
+    \newminted{Matlab}{bgcolor=bg, breaklines=true}
+    \newminted{python}{bgcolor=bg}
+    \newminted{TeX}{bgcolor=bg, breaklines=true}
+    %% <language>inline 行内代码
+    \newmintinline{Matlab}{}
+    \newmintinline{Python}{}
+    \newcommand*{\codeinline}[2]{~\mintinline{#1}{#2}~}
+    %% <language>file 格式化文件
+    \newmintedfile{Matlab}{bgcolor=bg, breaklines=true}
+    \newmintedfile{python}{bgcolor=bg, breaklines=true}
+
+%% 算法展示
+\usepackage[lined, algoruled, algochapter]{algorithm2e}
+    \SetKwProg{Function}{Function}{:}{end}
+
+
+%% 页眉页脚
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+    \fancyhead{}
+        \lhead{\kaishu\nouppercase{\leftmark}}
+        \rhead{\thepage}
+    \fancyfoot{}
+% 章标题所在页专用版式
+\fancypagestyle{chapterpage}{%
+    \chead{\slshape\leftmark}
+    \lhead{\sffamily 代码笔记本}
+    \rhead{\thepage}
+}
+
+%% 脚注，带圈数字，刘海洋，可以超过10
+\usepackage{xunicode-addon}
+\newfontfamily\fnmarkfont{ipag.ttf} % 带圈 0 到 20 被认做西文符号
+\newCJKfontfamily\fnCJKmarkfont{ipag.ttf} % 带圈数字超过 20 是 CJK 符号
+\renewcommand\thefootnote{
+    {\fnmarkfont\fnCJKmarkfont\textcircled{\arabic{footnote}}}
+}
+
+\usepackage{enumitem}%列表
+    \setlist[itemize]{%
+        nosep,
+        leftmargin=\parindent,
+}
+
+%% 自定义命令
+\newcommand*{\algoref}[1]{算法\ref{#1}}
+
+%% 超链接
+\usepackage{hyperref}
+    \hypersetup{%
+        bookmarksopen=true,  % 展开书签
+        bookmarksnumbered=true,  % 显示书签编号
+        bookmarksopenlevel=1,
+        unicode=true,  % 使书签支持unicode字符
+        %链接、颜色
+        breaklinks=true,  % 链接自动换行
+        colorlinks=true,  % 加颜色区分链接
+        citecolor=black,  % 文献序号颜色
+    }
+    %定制pdf属性
+    \hypersetup{%
+        pdftitle={代码笔记本},
+        pdfauthor={邹思宇},
+        pdfkeywords={LaTeX, PGFplot, Tikz, MATLAB, C, Python},
+        pdfstartview=Fit,%整个页面适合窗口
+        pdfcreator={XeLaTeX \& TeXStudio}
+    }%
+
+%% url样式
+\newfontfamily\urlfont{PT Sans Narrow}
+\def\UrlFont{\urlfont}
+\urlstyle{urlfont}
+
+\begin{document}
+    \frontmatter
+    
+    \mainmatter
+    \input{chapters/introduction}
+    \input{chapters/matlab}
+    \input{chapters/python}
+    \input{chapters/algorithm}
+    \backmatter
+\end{document}
