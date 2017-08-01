@@ -36,3 +36,11 @@ print(list(unfold(items1)))
 print(list(unfold(items2)))
 print(list(unfold(items3)))
 \end{pythoncode}
+
+\section{如何遍历当前文件夹及其子文件夹中的全部文件}
+
+前面用MATLAB实现了一个，现在用Python来实现。第一种方法是利用递归来实现，思路同样是先找文件，然后找子文件夹，最后对子文件夹递归；第二种方法是利用os.walk模块，并将其做成generator，这样在应对大量的文件时会有优势。推荐第二种方法，一来os模块考虑了很多我们忽略了的细节\footnote{比如，如果递归版本的函数遍历的根目录是一个磁盘，这个磁盘上的特殊的文件夹“System Volume Information”又是禁止被访问的，这时就会抛出一个PermissionError。笨一点的解决办法是从子目录的list中删除这个目录，好一点的办法就是用os模块了。}，二来generator是一个优雅的设计，用Python就应该好好学用generator。
+
+\pythonfile{code/python/get_all_file_name.py}
+
+
