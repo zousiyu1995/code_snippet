@@ -8,7 +8,7 @@
 
 \pythonfile{code/python/unfold.py}
 
-由于存在递归，所以函数会被调用很多次，每次调用所得的数据都需要保留，如何在多次的调用之间共享保留数据呢？我采用一个默认参数来实现，首次调用时不给默认参数新值，这会产生一个空的\codeinline{python}{list}，当对内层对象调用时，将上一次产生的数据赋值给这个参数。输出结果：
+由于存在递归，所以函数会被调用很多次，每次调用所得的数据都需要保留，如何在多次的调用之间共享保留数据呢？我采用一个默认参数来实现\footnote{前几天没有回想起list有个extend方法，显然用extend方法来实现更加优雅}，首次调用时不给默认参数新值，这会产生一个空的\codeinline{python}{list}，当对内层对象调用时，将上一次产生的数据赋值给这个参数。输出结果：
 
 \begin{pythoncode}
 >>> items1 = ['Paula', ['Thomas', 'Lewis', ['siyu', 'ziyan', ['jianyuan']]]]
