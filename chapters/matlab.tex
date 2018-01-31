@@ -1,6 +1,6 @@
 \chapter{MATLAB}
 
-\section{如何遍历当前文件夹及其子文件夹中的全部文件}
+\section{如何遍历当前文件夹及其子文件夹中的全部文件？}
 
 假设现在我们有这样一个文件夹A，它含有一些文件和子文件夹B、C、D......，这些子文件夹又包含若干层子文件夹。我们需要将这个父文件夹（A）及其子文件夹（B、C、D......）和孙文件夹中的所有文件名和其路径取出来。
 
@@ -46,4 +46,23 @@ MATLAB 2016a及之前的版本dir struct信息并不包含folder，如果返回s
 \subsection*{总结}
 \codeinline{Matlab}{dir()}函数遍历整个F盘共2万余文件文件大约需要1.555823s。我们实现的递归函数遍历F盘文件大约需要3.703009s。慢是慢了点，但我们成功运用了递归解决问题，不是吗？
 
-\section{title中英文标题}
+\subsection{如何按自然顺序排序字符串？}
+
+通常，我们会遇到处理一系列文件名有规律的文件的情况，比如：a1.txt、a2.txt ...... a100.txt。但是，当读取文件名到一个cell里后，我们发现文件名往往是乱序排列的，甚至当你使用\codeinline{Matlab}{sort}函数后，排序也不会改变。搜索了一下，在Mathworks File Exchange网站找到了一个自然排序的函数\footnote{\url{https://cn.mathworks.com/matlabcentral/fileexchange/34464-customizable-natural-order-sort}}，感谢作者Stephen Cobeldick。效果如下：
+
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[height=6cm]{disordered_file_name}
+        \caption{乱序的文件名}
+    \end{minipage}
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[height=6cm]{ordered_file_name}
+        \caption{排序后自然顺序的文件名}
+    \end{minipage}
+\end{figure}
+
+
+

@@ -5,6 +5,9 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{xcolor}
+\usepackage{graphicx}
+\graphicspath{{fig/}}
+\DeclareGraphicsExtensions{.pdf,.eps,.png,.jpg,.jpeg,.bmp}
 
 %% 中文文字处理
 \colorlet{title}{blue!40!black}
@@ -17,7 +20,6 @@
             pagestyle = chapterpage,
         },
         section = {
-            name = {问题},
             format = \bf\raggedright\color{title}\zihao{4},
             numberformat = \rmfamily,
             number = \arabic{section},
@@ -27,21 +29,18 @@
         },
     }%
 
+% 问题环境
+\newtheorem{prob}{问题}[chapter]
+\renewcommand{\theprob}{\arabic{prob}}
+
 %% 字体设置
 \usepackage{fontspec}
     \setmainfont{Adobe Garamond Pro}  % TeX Gyre Pagella
     \setsansfont{TeX Gyre Heros}
-    \setmonofont{Fira Code}  % Source Code Pro, Consolas, DejaVu Sans Mono
+    \setmonofont{Inziu Iosevka Slab SC}  % Source Code Pro, Consolas, DejaVu Sans Mono
     \setCJKmainfont[BoldFont={Source Han Sans SC}, ItalicFont={KaiTi}]{Source Han Serif SC}
     \setCJKmonofont{Inziu Iosevka Slab SC}  % FangSong
     \setCJKsansfont{Source Han Sans SC}
-
-%% 数学字体
-\usepackage{unicode-math}
-    \setmathfont[
-        math-style = ISO,
-        bold-style = ISO
-        ]{TeX Gyre Pagella Math}
 
 \usepackage{geometry}
     \geometry{paper=a4paper,
@@ -69,7 +68,6 @@
 %% 算法展示
 \usepackage[lined, algoruled, algochapter]{algorithm2e}
     \SetKwProg{Function}{Function}{:}{end}
-
 
 %% 页眉页脚
 \usepackage{fancyhdr}
