@@ -2,15 +2,15 @@
 
 \section{如何展开一个嵌套的序列？}
 
-我们现在有这样一个序列\codeinline{python}{items = [1, 2, [3, 4, [5, 6, [9, 8], 7], 8]]}，我们想逐级展开这个序列，然后将所有元素装入一个序列。
+我们现在有这样一个序列\mintinline{python}{items = [1, 2, [3, 4, [5, 6, [9, 8], 7], 8]]}，我们想逐级展开这个序列，然后将所有元素装入一个序列。
 
-如果这个序列层级较少，我们可以用多层\codeinline{python}{for}循环来遍历这个序列。一旦这个序列超过3层，过多的循环会让你很头疼。同样，这种多层级的问题我们可以用\textbf{递归}来解决。构建一个函数，这个函数能处理第一层的元素，由于第二层是\codeinline{python}{list}，它是一个可迭代对象，我们只需要判断第二层是不是可迭代对象，同时忽略\codeinline{python}{str, bytes}对象\footnote{\codeinline{python}{str, bytes}也是可迭代对象，我们要避免其展开成单个字符。}。只要内层是可迭代的，我们就开始递归，对其应用该函数。
+如果这个序列层级较少，我们可以用多层\mintinline{python}{for}循环来遍历这个序列。一旦这个序列超过3层，过多的循环会让你很头疼。同样，这种多层级的问题我们可以用\textbf{递归}来解决。构建一个函数，这个函数能处理第一层的元素，由于第二层是\mintinline{python}{list}，它是一个可迭代对象，我们只需要判断第二层是不是可迭代对象，同时忽略\mintinline{python}{str, bytes}对象\footnote{\mintinline{python}{str, bytes}也是可迭代对象，我们要避免其展开成单个字符。}。只要内层是可迭代的，我们就开始递归，对其应用该函数。
 
-\pythonfile{code/python/unfold.py}
+\inputminted{python}{code/python/unfold.py}
 
-由于存在递归，所以函数会被调用很多次，每次调用所得的数据都需要保留，如何在多次的调用之间共享保留数据呢？我采用一个默认参数来实现\footnote{前几天没有回想起list有个extend方法，显然用extend方法来实现更加优雅}，首次调用时不给默认参数新值，这会产生一个空的\codeinline{python}{list}，当对内层对象调用时，将上一次产生的数据赋值给这个参数。输出结果：
+由于存在递归，所以函数会被调用很多次，每次调用所得的数据都需要保留，如何在多次的调用之间共享保留数据呢？我采用一个默认参数来实现\footnote{前几天没有回想起list有个extend方法，显然用extend方法来实现更加优雅}，首次调用时不给默认参数新值，这会产生一个空的\mintinline{python}{list}，当对内层对象调用时，将上一次产生的数据赋值给这个参数。输出结果：
 
-\begin{pythoncode}
+\begin{minted}{python}
 >>> items1 = ['Paula', ['Thomas', 'Lewis', ['siyu', 'ziyan', ['jianyuan']]]]
 >>> items2 = [1, 2, [3, 4, [5, 6, [9, 8], 7], 8]]
 >>> items3 = [[1, 2], 3, (4, [5, 6])]
@@ -20,39 +20,37 @@
 ['Paula', 'Thomas', 'Lewis', 'siyu', 'ziyan', 'jianyuan']
 [1, 2, 3, 4, 5, 6, 9, 8, 7, 8]
 [1, 2, 3, 4, 5, 6]
-\end{pythoncode}
+\end{minted}
 
 但这样做有两个显而易见的坏处，一是当我们的嵌套序列有无限多层，递归会栈溢出；二是序列整个被读取到内存中了，当序列元素非常多，比如1亿，内存会被撑死。坏处一我们不去管他，大多数情况下是适用的，坏处二可以很容易的利用generator来解决\footnote{思路来源~\url{http://python3-cookbook.readthedocs.io/zh_CN/latest/c04/p14_flattening_nested_sequence.html}}。
 
-\pythonfile{code/python/unfold_generator.py}
+\inputminted{python}{code/python/unfold_generator.py}
 
-使用generator一来能防止内存爆炸，二来不需要在函数的多次调用见传递数据，代码更清晰明朗。需要注意，generator是惰性序列，边调用边计算，我们需要使用\codeinline{python}{for}迭代出每一个元素或者直接用\codeinline{python}{list()}获取全部元素。
+使用generator一来能防止内存爆炸，二来不需要在函数的多次调用见传递数据，代码更清晰明朗。需要注意，generator是惰性序列，边调用边计算，我们需要使用\mintinline{python}{for}迭代出每一个元素或者直接用\mintinline{python}{list()}获取全部元素。
 
-\begin{pythoncode}
+\begin{minted}{python}
 items1 = ['Paula', ['Thomas', 'Lewis', ['siyu', 'ziyan', ['jianyuan']]]]
 items2 = [1, 2, [3, 4, [5, 6, [9, 8], 7], 8]]
 items3 = [[1, 2], 3, (4, [5, 6])]
 print(list(unfold(items1)))
 print(list(unfold(items2)))
 print(list(unfold(items3)))
-\end{pythoncode}
+\end{minted}
 
 \section{如何遍历当前文件夹及其子文件夹中的全部文件？}
 
 前面用MATLAB实现了一个，现在用Python来实现。第一种方法是利用递归来实现，思路同样是先找文件，然后找子文件夹，最后对子文件夹递归；第二种方法是利用os.walk模块，并将其做成generator，这样在应对大量的文件时会有优势。推荐第二种方法，一来os模块考虑了很多我们忽略了的细节\footnote{比如，如果递归版本的函数遍历的根目录是一个磁盘，这个磁盘上的特殊的文件夹“System Volume Information”又是禁止被访问的，这时就会抛出一个PermissionError。笨一点的解决办法是从子目录的list中删除这个目录，好一点的办法就是用os模块了。}，二来generator是一个优雅的设计，用Python就应该好好学用generator。
 
-\pythonfile{code/python/get_all_file_name.py}
+\inputminted{python}{code/python/get_all_file_name.py}
 
 \section{如何在遍历list时删除元素？}
 
-存在一个list\_a = [1, 2, 3, 4, 5, 6, 7, 8, 9]，现在需要逐一操作内部元素，并在操作结束之后删除它。使用\codeinline{python}{while}判断\codeinline{python}{list}是否为空，不为空则\codeinline{python}{pop}第一个元素，在循环下依次操作每一个元素。
+存在一个list\_a = [1, 2, 3, 4, 5, 6, 7, 8, 9]，现在需要逐一操作内部元素，并在操作结束之后删除它。使用\mintinline{python}{while}判断\mintinline{python}{list}是否为空，不为空则\mintinline{python}{pop}第一个元素，在循环下依次操作每一个元素。
 
-\begin{pythoncode}
+\begin{minted}{python}
 list_a = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 while list_a:
     temp = list_a.pop(0)
     print(temp)
-\end{pythoncode}
-
-
+\end{minted}

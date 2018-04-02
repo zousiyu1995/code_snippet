@@ -29,10 +29,6 @@
         },
     }%
 
-% 问题环境
-\newtheorem{prob}{问题}[chapter]
-\renewcommand{\theprob}{\arabic{prob}}
-
 %% 字体设置
 \usepackage{fontspec}
     \setmainfont{Adobe Garamond Pro}  % TeX Gyre Pagella
@@ -44,30 +40,16 @@
 
 \usepackage{geometry}
     \geometry{paper=a4paper,
-        hmargin = 2cm,
+%        hmargin = 2cm,
         vmargin = 2cm,
     }%
 
 %% 代码展示
-\definecolor{bg}{rgb}{0.95, 0.95, 0.95}
+\definecolor{bg}{rgb}{0.95, 0.95, 0.95} % 背景色
 
 \usepackage{minted}  % 启用浮动体支持[newfloat=true]
     \usemintedstyle{colorful}  % 高亮主题
-    %% <language>code 环境
-    \newminted{Matlab}{bgcolor=bg, breaklines=true}
-    \newminted{python}{bgcolor=bg}
-    \newminted{TeX}{bgcolor=bg, breaklines=true}
-    %% <language>inline 行内代码
-    \newmintinline{Matlab}{}
-    \newmintinline{Python}{}
-    \newcommand*{\codeinline}[2]{~\mintinline{#1}{#2}~}
-    %% <language>file 格式化文件
-    \newmintedfile{Matlab}{bgcolor=bg, breaklines=true}
-    \newmintedfile{python}{bgcolor=bg, breaklines=true, style=friendly}
-
-%% 算法展示
-\usepackage[lined, algoruled, algochapter]{algorithm2e}
-    \SetKwProg{Function}{Function}{:}{end}
+    \setminted{bgcolor=bg, breaklines=true}
 
 %% 页眉页脚
 \usepackage{fancyhdr}
@@ -98,7 +80,6 @@
 }
 
 %% 自定义命令
-\newcommand*{\algoref}[1]{算法\ref{#1}}
 
 %% 超链接
 \usepackage{hyperref}
@@ -110,13 +91,14 @@
         %链接、颜色
         breaklinks=true,  % 链接自动换行
         colorlinks=true,  % 加颜色区分链接
+        linkcolor=title,
         citecolor=black,  % 文献序号颜色
     }
     %定制pdf属性
     \hypersetup{%
         pdftitle={代码笔记本},
-        pdfauthor={邹思宇},
-        pdfkeywords={LaTeX, PGFplot, Tikz, MATLAB, C, Python},
+        pdfauthor={邹思宇 zousiyu},
+        pdfkeywords={LaTeX, PGFplot, Tikz, MATLAB, C, C++, Python},
         pdfstartview=Fit,%整个页面适合窗口
         pdfcreator={XeLaTeX \& TeXStudio}
     }%
@@ -128,11 +110,11 @@
 
 \begin{document}
     \frontmatter
-    
     \mainmatter
     \input{chapters/introduction}
     \input{chapters/matlab}
     \input{chapters/python}
+    \input{chapters/c_and_cpp}
     \input{chapters/algorithm}
     \input{chapters/git}
     \backmatter

@@ -1,0 +1,57 @@
+\chapter{C和C++}
+
+\section{C语言的动态数组}
+
+大多数时候为了方便（其实是我菜），会使用库较多（方便）的C++，但是C语言在实际生产中使用率仍然很高，比如长期使用的ANSYS Fluent的UDF就不得不用C语言。下面是一个简易的动态数组的实现，来源\footnote{\url{https://stackoverflow.com/questions/3536153/c-dynamically-growing-array}}。
+
+\begin{minted}{c}
+#include <iostream>
+
+typedef struct
+{
+    int *array;
+    size_t used;
+    size_t size;
+} Array;
+
+void initArray(Array *a, size_t initialSize)
+{
+    a->array = (int *)malloc(initialSize * sizeof(int));
+    a->used = 0;
+    a->size = initialSize;
+}
+
+void insertArray(Array *a, int element)
+{
+    // a->used is the number of used entries, because a->array[a->used++] updates a->used only *after* the array has been accessed.
+    // Therefore a->used can go up to a->size
+    if (a->used == a->size)
+    {
+        a->size *= 2;
+        a->array = (int *)realloc(a->array, a->size * sizeof(int));
+    }
+    a->array[a->used++] = element;
+}
+
+void freeArray(Array *a)
+{
+    free(a->array);
+    a->array = NULL;
+    a->used = a->size = 0;
+}
+
+int main()
+{
+    Array a;
+    int i;
+
+    initArray(&a, 5); // initially 5 elements
+    for (i = 0; i < 100; i++)
+        insertArray(&a, i);     // automatically resizes as necessary
+    printf("%d\n", a.array[9]); // print 10th element
+    printf("%d\n", a.used);     // print number of elements
+    freeArray(&a);
+    return 0;
+}
+
+\end{minted}

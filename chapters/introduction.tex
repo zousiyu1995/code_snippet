@@ -1,6 +1,6 @@
 \chapter*{导言}
 
-这份文档主要用来存放一些实际工作中碰到的实用的代码片段，可能包含MATLAB、Python、C和一些\LaTeX{}的小知识。由于我是一个化学工程的学生，同时也初涉编程未深，计算机专业知识难免会出点错误，欢迎指正。
+这份文档主要用来存放一些实际工作中碰到的实用的代码片段，可能包含MATLAB、Python、C/C++和一些\LaTeX{}的小知识。个人笔记，个人娱乐。
 
 如果有人想编译这份手册或想学习一下实现，请务必读以下说明。
 
@@ -15,7 +15,7 @@
 \item 等宽字体：大多数等宽字体都是程序员使用的，开源居多，颇易获取。我常用DejaVu Sans Mono，Fira Code和Source Code Pro三种。
 \end{itemize}
 
-\begin{TeXcode}
+\begin{minted}{TeX}
 %% 字体设置
 \usepackage{fontspec}
     \setmainfont{Adobe Garamond Pro}  % TeX Gyre Pagella
@@ -31,10 +31,10 @@
 
 %% url样式
 \newfontfamily\urlfont{PT Sans Narrow}
-\end{TeXcode}
+\end{minted}
 
 \textbf{编译环境设置}，代码高亮环境由minted宏包提供（需要Python环境）。
 
-\textbf{代码测试环境}，各种代码的运行环境为MATLAB 2017a、Anaconda 4.4.0（Python 3.6x）、Visual Studio 2017 community、MiK\TeX{} 2.9（各宏包均为最新）。
+\textbf{代码测试环境}，各种代码的运行环境为MATLAB 2017b、Anaconda、Visual Studio 2017 community、MiK\TeX{}（各宏包均为最新）。
 
-如果你觉得本文档里的代码有用，请不要直接复制文档里面的代码（直接复制会复制到换行产生的符号及空格，可能导致代码产生难以预计的效果），请到\href{https://github.com/Zousiyu/code_snippet}{github项目}的code文件夹找对应的文件。
+如果你觉得本文档里的代码有用，请不要直接复制文档里面的代码（直接复制会复制到换行产生的符号及空格，可能导致代码出现难以预计的错误），请到\href{https://github.com/Zousiyu/code_snippet}{github项目}的code文件夹找对应的文件。
