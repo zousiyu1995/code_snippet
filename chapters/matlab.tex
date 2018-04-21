@@ -75,5 +75,157 @@ while ~isempty(mat_a)
 end
 \end{minted}
 
+\section{再谈向量化操作}
 
+今天又碰到一个数组操作的问题，同样，如果用一般的方法来解决，代码是很冗长的，向量化操作再次助我一臂之力。
+
+有一个2列的数组\mintinline{Matlab}{all_data}，第一列有正有负，我们称第一列为$ x $，第二列为$ y $。现在需要索引$ x>0 $时对应的$ [x, y] $为一个新的数组\mintinline{Matlab}{a}。并且需要从\mintinline{Matlab}{a}中返回$ y=\min(y) $时所对应的数组$ [x_0, y_0] $。
+
+\begin{minted}{Matlab}
+... ...
+-1.44319267634370e-06 9.80637785912817e-06
+-1.68967863180042e-07 9.73806551956721e-06
+-6.45218837777561e-07 9.75074561060079e-06
+6.28923217787410e-07 9.75037059307950e-06
+1.54045071473931e-07 9.73772289244816e-06
+1.42591401762642e-06 9.80510552313044e-06
+... ...
+\end{minted}
+
+先谈向量化获取数组\mintinline{Matlab}{a}，利用逻辑索引，保证$ x $全大于0，并取出1、2两列；然后利用\mintinline{Matlab}{find}获取$ y=\min(y) $的行索引；最后利用索引轻松找到需要的数据。可能看起来比较难理解，但是此时再在外面套文件操作的循环等循环操作是不是清晰多了。
+
+\begin{minted}{Matlab}
+a = all_data(all_data(:, 1) > 0, 1:2);
+
+[r, ~] = find(a(:, 2) == min(a(:, 2)));
+what_is_i_need = a(r, c);
+\end{minted}
+
+\begin{minted}{Matlab}
+clear
+clc
+
+file_name_struct = dir('./0518*.txt');
+file_name = {file_name_struct(:).name};
+file_name = natsort(file_name);
+what_is_i_need = [];
+
+for file_num = 1:length(file_name)
+    all_data = load(file_name{file_num});
+    a = all_data(all_data(:, 1) > 0, 1:2);
+    
+    [r, ~] = find(a(:, 2) == min(a(:, 2)));  % 
+    what_is_i_need = [what_is_i_need; a(r, 1), a(r, 2)];
+end
+
+plot(what_is_i_need(:,2))
+\end{minted}
+
+再来记录一个问题：循环操作里面有一个的2列数组\mintinline{Matlab}{all_data}，每次循环取第一列中与0.5最接近的数据和对应的列，所以该数组大小会不断变，设其维度为$ n\times 2 $。如果$ n<2 $，我们将数据置为0并保存到一个新数组里面去；如果$ n>=2 $，保存其最小值和最大值到新数组里面去。同样，利用向量化操作最大程度减少代码量。
+
+\begin{minted}{Matlab}
+pos = [];
+for i = 1:length(time)
+    % [x, phi]
+    all_data = load(strcat(mph_file, '\', num2str(i), '.txt'));
+    all_data = all_data(abs(all_data(:, 2)-0.5) < 0.01, :);
+    [r, c] = size(all_data);
+    if r == 0 || r == 1
+        x_min = 0;
+        x_max = 0;
+        phi = 0;
+        pos = [pos; time(i), x_min, phi; time(i), x_max, phi];
+    else
+        x_min = all_data(all_data(:, 1) == min(all_data(:, 1)));
+        x_max = all_data(all_data(:, 1) == max(all_data(:, 1)));
+        [r, ~] = find(all_data == x_min);
+        phi_min = all_data(r, 2);
+        [r, ~] = find(all_data == x_max);
+        phi_max = all_data(r, 2);
+        pos = [pos; time(i), x_min, phi_min; time(i), x_max, phi_max];
+    end
+end
+\end{minted}
+
+\section{文件读取}
+
+\mintinline{Matlab}{csvread}适合读取纯Comma-Separated Values文件，\mintinline{Matlab}{load}适合读取带注释的Comma-Separated Values文件（示例如下），其在读取过程中会自动忽略csv文件的注释。
+
+\begin{minted}{Matlab}
+% x                       y                        IsoLevel
+-1.348651530446577E-5     1.798983884698175E-5     0.5
+-1.4987361701783775E-5    2.4219367655756994E-5    0.5
+-1.494145158530118E-5     2.3443649068772022E-5    0.5
+... ...
+\end{minted}
+
+\section{如何将两个维度不一致的矩阵串联起来？}
+
+现有矩阵\mintinline{Matlab}{a = [1]}和矩阵\mintinline{Matlab}{b = b = [5; 9; 4; 4]}，将其横向拼接成一个矩阵\mintinline{Matlab}{c}，
+
+\begin{minted}{Matlab}
+c = [1, 5;
+    1, 9;
+    1, 4;
+    1, 4]
+\end{minted}
+
+思路很简单，因为\mintinline{Matlab}{a}的维度不够，所以将其扩维，然后拼接。
+
+\begin{minted}{Matlab}
+a = [1];
+b = [5; 9; 4; 4];
+[r, ~] = size(b);
+c = [repmat(a, r, 1), b];
+\end{minted}
+
+\section{Hex颜色的处理}
+
+Hex是一种常用的十六进制颜色码，MATLAB并不能识别，从MathWorks File Exchange找了一个\mintinline{Matlab}{rgb2hex and hex2rgb}的函数\footnote{\url{https://ww2.mathworks.cn/matlabcentral/fileexchange/46289-rgb2hex-and-hex2rgb}}，另，MathWorks File Exchange真特么是个宝库，缺什么找什么，一找一个准。
+
+\section{谈谈MATLAB中的图形对象}
+
+可视化是一项很费时费力的工作，MATLAB可视化成本更高，由于参数混杂，很难进行快速调整。我脑子不好使，先记录一下MATLAB基本图像元素的构成，更详细介绍请查阅MATLAB帮助文档\footnote{\url{https://ww2.mathworks.cn/help/matlab/graphics-objects.html}}。
+
+重点关注两类对象，顶层对象\mintinline{Matlab}{Root, Figure, Axes}和插图对象\mintinline{Matlab}{Colorbar, Legend}。图形对象相关的函数如\autoref{g_o_identification}所示，用于查找、复制和删除图形对象。
+
+\begin{minted}{Matlab}
+r = groot;
+fig = figure;
+ax = gca;
+c = colorbar;
+lgd = legend('a','b','c');
+\end{minted}
+
+\begin{figure}
+    \centering
+    \includegraphics[height=6cm]{g_o_identification}
+    \caption{MATLAB中的图形对象的标识}
+    \label{g_o_identification}
+\end{figure}
+
+新版本MATLAB推荐使用调用对象的方式修改图形对象属性，老版本用\mintinline{Matlab}{get, set}函数分别查阅和修改对象属性。
+
+\begin{minted}{Matlab}
+p = plot(1:10);
+p.Color = 'r';
+set(p, 'Color', 'red');
+\end{minted}
+
+\begin{figure}
+    \centering
+    \includegraphics[height=6cm]{graphics_objects}
+    \caption{MATLAB中的图形对象}
+\end{figure}
+
+\subsection{子图}
+
+\mintinline{Matlab}{subplot}函数可以画子图，有两种调用方式，
+
+\begin{minted}{Matlab}
+subplot(m,n,p)
+subplot('Position',pos)
+\end{minted}
+
+第一种方式是创建一个$ m\times n $的网格，并在第$ p $个网格上绘图；第二种方式是在指定\mintinline{Matlab}{pos}上绘图，座标属性为[left bottom width height]。可以通过查阅图像对象来获取图形属性。
 
