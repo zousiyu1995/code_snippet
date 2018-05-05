@@ -1,5 +1,11 @@
 \chapter{MATLAB}
 
+\section{将内置函数背下来}
+
+在MATLAB中工作时，很多操作其实都是有内置函数的，对MATLAB不熟悉就用不成，然后就“曲线救国”了，效率不高且不说，关键自己实现很费脑！这里收集一些数值计算工作中极其常用的函数。
+
+\mintinline{Matlab}{meshgrid}
+
 \section{如何遍历当前文件夹及其子文件夹中的全部文件？}
 
 假设现在我们有这样一个文件夹A，它含有一些文件和子文件夹B、C、D......，这些子文件夹又包含若干层子文件夹。我们需要将这个父文件夹（A）及其子文件夹（B、C、D......）和孙文件夹中的所有文件名和其路径取出来。
@@ -179,9 +185,11 @@ b = [5; 9; 4; 4];
 c = [repmat(a, r, 1), b];
 \end{minted}
 
-\section{Hex颜色的处理}
+\section{颜色的处理}
 
 Hex是一种常用的十六进制颜色码，MATLAB并不能识别，从MathWorks File Exchange找了一个\mintinline{Matlab}{rgb2hex and hex2rgb}的函数\footnote{\url{https://ww2.mathworks.cn/matlabcentral/fileexchange/46289-rgb2hex-and-hex2rgb}}，另，MathWorks File Exchange真特么是个宝库，缺什么找什么，一找一个准。
+
+有时候需要将\mintinline{Matlab}{double}类型的矩阵转换成rgb色值的三维矩阵，没有MATLAB内置函数能做到，在MathWorks File Exchange上找了个\mintinline{Matlab}{double2rgb}函数\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/30264-double2rgb}}可以很方便的做到这一点。
 
 \section{谈谈MATLAB中的图形对象}
 
@@ -228,4 +236,54 @@ subplot('Position',pos)
 \end{minted}
 
 第一种方式是创建一个$ m\times n $的网格，并在第$ p $个网格上绘图；第二种方式是在指定\mintinline{Matlab}{pos}上绘图，座标属性为[left bottom width height]。可以通过查阅图像对象来获取图形属性。
+
+\section{函数！函数！}
+
+这里收集几个关于函数的最佳实践，首先是函数的返回值问题。很多时候，MATLAB函数的返回值不止一个，通常让变量一一返回，在外部使用变量一一接收。最佳做法是将需要返回的变量装入\mintinline{Matlab}{struct}中，这样在外部仅使用一个变量就能接收所有返回值。
+
+\section{如何在矩阵中插入一行/一列}
+
+看了一圈，只能通过拼接矩阵来实现，并且MATLAB自己没有这样的函数。自己写了一个。
+
+\begin{minted}{Matlab}
+% 按行插入
+function mat = row_insert(mat_row, pos, mat_add)
+[~, c_row] = size(mat_row);
+[~, c_add] = size(mat_add);
+if c_row == c_add
+    mat = [mat_row(1:pos-1, :); mat_add; mat_row(pos:end, :)];
+else
+    error('要插入的矩阵列要与原始矩阵一致')
+end
+end
+
+% 按列插入
+function mat = col_insert(mat_row, pos, mat_add)
+[r_row, ~] = size(mat_row);
+[r_add, ~] = size(mat_add);
+if r_row == r_add
+    mat = [mat_row(:, 1:pos-1), mat_add, mat_row(:, pos:end)];
+else
+    error('要插入的矩阵行要与原始矩阵一致')
+end
+end
+\end{minted}
+
+\section{图形处理}
+
+\subsection{基本法}
+
+\subsection{图形插值}
+
+图形插值就是让模糊的图形（像素较少）变成比较清楚的图形（像素变多），稍微科学一点的说法是，图像插值就是利用已知邻近像素点的灰度值（或rgb值）来产生未知像素点的灰度值（或rgb值），以便由原始图像再生出具有更高分辨率的图像。图像处理的学问太多，涉及到的数学也比较深，这里只简单记录应用。
+
+常见的插值算法有最近邻插值算法，双线性插值算法，三次卷积等。具体内容可以去学习一些DIP(Digital image processing)的公开课。如：
+
+\url{http://inside.mines.edu/~whoff/courses/EENG510/lectures/}
+
+\url{http://cs.nju.edu.cn/liyf/dip15/dip.htm}
+
+常用的是MATLAB内置的\mintinline{Matlab}{interp2}函数，
+
+Github上找了个现成的工具箱\footnote{\url{https://github.com/FlorentBrunet/image-interpolation-matlab}}，快速实现bicubic和bilinear两种插值算法，效果很不错。
 
