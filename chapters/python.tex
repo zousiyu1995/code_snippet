@@ -55,4 +55,40 @@ while list_a:
     print(temp)
 \end{minted}
 
-\section{数值计算}
+\section{关于路径的一切}
+
+无论你用python干什么，只要你操作文件，就会涉及路径。接下来记录一些关于路径操作的心得，避免以后踩坑。
+
+\textbf{脚本所在目录}
+
+一般情况，如果你在当前目录启动python，你可以使用\mintinline{python}{'.'}或者\mintinline{python}{os.getcwd()}获取脚本所在目录（也就是当前目录）。但是，如果python不从当前目录启动，此法就很有风险（逃）。所有要坚定不移地使用如下这种优雅的方式获取脚本所在的\textbf{绝对路径}。
+
+\begin{minted}{python}
+import os
+
+current_path = os.path.split(os.path.abspath(__file__))[0]
+\end{minted}
+
+\textbf{获取指定文件类型的文件的路径}
+
+听起来很绕口，就是说如果你只想获取一个目录里面的pdf文件，该怎么办？遇到问题一定要不假思索，直接查阅python库（人生苦短）。\mintinline{python}{walk}函数可以很方便的遍历目录，\mintinline{python}{splitext}可以把扩展名分开，再加个判断，并注意合并成绝对路径哦，最后不要忘记使用优雅的生成器，哦耶！
+
+\begin{minted}{python}
+import os
+
+def get_designated_file_name(path, ext):
+    for folder, subdirs, files in os.walk(path):
+        for file in files:
+            if os.path.splitext(file)[1] == ext:
+                yield os.path.join(folder, file)
+
+current_path = os.path.split(os.path.abspath(__file__))[0]
+file_name = list(get_designated_file_name(current_path, '.pdf'))
+\end{minted}
+
+结合路径处理来个实例，我们要处理某个路径（本例是脚本运行目录下的）下的所有pdf文件，遍历所有文件并把第一页提取出来合并成一个单独的pdf文件。我们需要注意如下几点：遍历pdf文件时跳过上次输出的文件；避免意外，全部转化为绝对路径处理。
+
+\inputminted{python}{code/python/treat_pdf.py}
+
+
+

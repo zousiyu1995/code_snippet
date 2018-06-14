@@ -195,7 +195,24 @@ Hex是一种常用的十六进制颜色码，MATLAB并不能识别，从MathWork
 
 可视化是一项很费时费力的工作，MATLAB可视化成本更高，由于参数混杂，很难进行快速调整。我脑子不好使，先记录一下MATLAB基本图像元素的构成，更详细介绍请查阅MATLAB帮助文档\footnote{\url{https://ww2.mathworks.cn/help/matlab/graphics-objects.html}}。
 
-重点关注两类对象，顶层对象\mintinline{Matlab}{Root, Figure, Axes}和插图对象\mintinline{Matlab}{Colorbar, Legend}。图形对象相关的函数如\autoref{g_o_identification}所示，用于查找、复制和删除图形对象。
+\subsection{图形对象}
+
+MATLAB的图形系统中常用的对象分为：顶层对象（Root，Figure，Axes等）、图表对象（如Bar，Contour，Surface，Line等），插图对象（如Colorbar，Legend），注释对象（如Arrow，TextBox等）和原始对象，函数对象，组对象，标尺对象等几种不常用对象。
+
+\begin{figure}
+    \centering
+    \includegraphics[height=8cm]{g_o_identification}
+    \caption{MATLAB中的图形对象的标识}
+    \label{g_o_identification}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[height=8cm]{graphics_objects}
+    \caption{MATLAB中的图形对象}
+\end{figure}
+
+我们重点关注两类对象，顶层对象\mintinline{Matlab}{Root, Figure, Axes}和插图对象\mintinline{Matlab}{Colorbar, Legend}。图形对象相关的函数如\autoref{g_o_identification}所示，用于查找、复制和删除图形对象。这些操作推荐使用面向对象编程的方式进行，代码风格如下。
 
 \begin{minted}{Matlab}
 r = groot;
@@ -205,26 +222,15 @@ c = colorbar;
 lgd = legend('a','b','c');
 \end{minted}
 
-\begin{figure}
-    \centering
-    \includegraphics[height=6cm]{g_o_identification}
-    \caption{MATLAB中的图形对象的标识}
-    \label{g_o_identification}
-\end{figure}
+\mintinline{Matlab}{figure}控制图窗窗口的外观和行为，\mintinline{Matlab}{axes}控制绘图区域外观和行为的对象，图表对象（如Bar，Line等）才控制展示数据的图形的外观和行为，这几个关系一定要拎得清。如，你要修改图形窗口的大小和位置，那就改figure对象的属性；如果你要修改坐标轴的线条或者坐标轴标签，就修改axes的属性；最后，改图形内容属性，比如plot线条的粗细，你才需要修改图表对象的属性。MATLAB图形系统的设计层级关系非常明晰，理清关系才能高效进行“码”操作（笑。
 
-新版本MATLAB推荐使用调用对象的方式修改图形对象属性，老版本用\mintinline{Matlab}{get, set}函数分别查阅和修改对象属性。
+\subsection{格式和注释}
 
-\begin{minted}{Matlab}
-p = plot(1:10);
-p.Color = 'r';
-set(p, 'Color', 'red');
-\end{minted}
+大部分调整图像格式和注释的函数都是直接修改图形对象的属性，从代码可维护性的角度来看，是没必要用这些函数来修改图形的属性的。但是有一些很奇怪的函数调整的不是图像对象的属性，比如\mintinline{Matlab}{caxis}函数用于修改colorbar的色值范围，但是colorbar对象根本没有这个属性，这就卧槽了！有必要单独列出来记一下。
 
-\begin{figure}
-    \centering
-    \includegraphics[height=6cm]{graphics_objects}
-    \caption{MATLAB中的图形对象}
-\end{figure}
+格式和注释分如下几类\footnote{\url{https://ww2.mathworks.cn/help/matlab/formatting-and-annotation.html}}：标题和标签、坐标区外观、颜色图、三维场景控制。
+
+看，是吧，大部分内容直接修改图形对象的属性就可以了，但这里面偏偏有特例，可要注意了！
 
 \subsection{子图}
 
@@ -236,6 +242,41 @@ subplot('Position',pos)
 \end{minted}
 
 第一种方式是创建一个$ m\times n $的网格，并在第$ p $个网格上绘图；第二种方式是在指定\mintinline{Matlab}{pos}上绘图，座标属性为[left bottom width height]。可以通过查阅图像对象来获取图形属性。
+
+值得注意的是\mintinline{Matlab}{subplot}这个函数创建的是一个\mintinline{Matlab}{axes}对象，所有\mintinline{Matlab}{axes}对象可修改的属性对\mintinline{Matlab}{subplot}都起作用，哦也。
+
+\subsection{最佳实践}
+
+用一个图像对象的关键是搞清楚这个对象属于图像系统中的哪一类主要对象，然后去阅读该类对象的文档，切记，阅读帮助文档是最有效的解决方案。
+
+新版本MATLAB推荐使用调用对象的方式修改图形对象属性，老版本用\mintinline{Matlab}{get, set}函数分别查阅和修改对象属性，或者使用参数传递的方法修改图形对象的属性，没有调用对象的方式优雅。下面的代码展示两种方式的区别。
+
+\begin{minted}{Matlab}
+p = plot(1:10);
+p.Color = 'r';
+set(p, 'Color', 'red');
+\end{minted}
+
+绘图最佳实践的代码风格如下所示，依次建立figure，axes和图表对象（如Bar，Line等），然后使用面向对象编程的方式修改其属性，有些图形属性有多层，此时切勿烦躁，及时使用\mintinline{Matlab}{get()}函数查阅对象属性。坚持使用面向对象编程，代码风格会更加清晰，不宜混乱。实际上，传参和set这两种方式最大的劣势就是不能自动补全，而且写字符串很别扭。
+
+\begin{minted}{Matlab}
+fig = figure;
+ax = axes;
+fig_bar = bar(cate, [all_data{:, 2}]);
+ax.YLabel.String = 'Variance';
+\end{minted}
+
+\subsection{谈一谈colorbar}
+
+colorbar这个对象属于插图对象，要修改的属性常常是位置，阅读官方文档吧\footnote{\url{https://ww2.mathworks.cn/help/matlab/ref/matlab.graphics.illustration.colorbar-properties.html}}！
+
+怎样用代码修改colorbar的颜色和色值范围呢？这个问题困扰了我很久，一直觉得就是一行代码的事，果然不错，见官方文档\footnote{\url{https://ww2.mathworks.cn/help/matlab/ref/caxis.html}}！
+
+\mintinline{Matlab}{caxis(target, [min max])}函数接受两个对象，目标对象可以是一个axes或者figure对象。
+
+\begin{minted}{Matlab}
+caxis(ax, [1, 100])  % 修改 ax 对象的色值范围为 1 - 100
+\end{minted}
 
 \section{函数！函数！}
 
