@@ -32,14 +32,14 @@
 %% 字体设置
 \usepackage{fontspec}
     \setmainfont{Adobe Garamond Pro}  % TeX Gyre Pagella
-    \setsansfont{TeX Gyre Heros}
-    \setmonofont{Inziu Iosevka Slab SC}  % Source Code Pro, Consolas, DejaVu Sans Mono
+    \setsansfont{Arial}
+    \setmonofont{Iosevka Type Slab}  % Source Code Pro, Consolas, DejaVu Sans Mono
     \setCJKmainfont[BoldFont={Source Han Sans SC}, ItalicFont={KaiTi}]{Source Han Serif SC}
-    \setCJKmonofont{Inziu Iosevka Slab SC}  % FangSong
+    \setCJKmonofont{Sarasa Term SC}  % FangSong
     \setCJKsansfont{Source Han Sans SC}
 
-\usepackage{unicode-math}
-    \setmathfont[math-style = ISO, bold-style = ISO]{TeX Gyre Pagella Math}
+%\usepackage{unicode-math}
+%    \setmathfont[math-style = ISO, bold-style = ISO]{TeX Gyre Pagella Math}
 
 \usepackage{geometry}
     \geometry{paper=a4paper,
@@ -82,7 +82,20 @@
         leftmargin=\parindent,
 }
 
-%% 自定义命令
+%% 图表标题样式
+\usepackage[hypcap=true,hypcapspace=1cm]{caption}
+\captionsetup[figure]{%
+    labelsep=quad,
+    justification=centering,
+    labelfont=bf,
+    textfont={sf,color=title},
+}%
+\captionsetup[table]{%
+    labelsep=quad,
+    justification=centering,
+    labelfont=bf,
+    textfont={sf,color=title},
+}%
 
 %% 超链接
 \usepackage{hyperref}
@@ -105,6 +118,25 @@
         pdfstartview=Fit,%整个页面适合窗口
         pdfcreator={XeLaTeX \& TeXStudio}
     }%
+
+%自动引用
+\AtBeginDocument{%
+    \def\figureautorefname{图}%
+    \def\tableautorefname{表}%
+    \def\partautorefname{卷}%
+    \def\appendixautorefname{附录}%
+    \def\equationautorefname{式}%
+    \def\Itemautorefname{列表}%
+    \def\chapterautorefname{章}%
+    \def\sectionautorefname{节}%
+    \def\subsectionautorefname{小节}%
+    \def\subsubsectionautorefname{条目}%
+    \def\paragraphautorefname{自然段}%
+    \def\Hfootnoteautorefname{脚注}%
+    \def\AMSautorefname{式}%
+    \def\theoremautorefname{定理}%
+    \def\pageautorefname{页}%
+}%
 
 %% url样式
 \newfontfamily\urlfont{PT Sans Narrow}

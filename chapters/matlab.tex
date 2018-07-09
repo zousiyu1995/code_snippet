@@ -185,6 +185,22 @@ b = [5; 9; 4; 4];
 c = [repmat(a, r, 1), b];
 \end{minted}
 
+\section{数组/矩阵去重}
+
+假设现在有一个数组或矩阵，里面包含许多重复的项目，我们需要合并这些重复的项目。MATLAB提供一个名为\mintinline{Matlab}{unique}的函数可以用来去重。很可惜，你用过就会发现，去重后数据的先后顺序乱了（MATLAB给排序了）。借用排序算法的一个概念，这叫不稳定的去重。
+
+其实我们可以在去重的同时记录数据第一次出现的位置，然后根据这个位置把去重后的数据再次排序即可。
+
+\begin{minted}{Matlab}
+...
+tmp = load(file_name_str(num).name);
+[data, pos] = unique(tmp(:, 2), 'first');
+data = sortrows([pos, data]);
+\end{minted}
+
+最后，忙活了半天，发现\mintinline{Matlab}{unique}函数有一个\mintinline{Matlab}{'stable'}参数实现了稳定的去重，fuck you！这件事情告诉我们，要认真读文档。当然，还是有收获的，起码学会了一个新的函数\mintinline{Matlab}{sortrows}的用法。
+
+
 \section{颜色的处理}
 
 Hex是一种常用的十六进制颜色码，MATLAB并不能识别，从MathWorks File Exchange找了一个\mintinline{Matlab}{rgb2hex and hex2rgb}的函数\footnote{\url{https://ww2.mathworks.cn/matlabcentral/fileexchange/46289-rgb2hex-and-hex2rgb}}，另，MathWorks File Exchange真特么是个宝库，缺什么找什么，一找一个准。
@@ -276,6 +292,54 @@ colorbar这个对象属于插图对象，要修改的属性常常是位置，阅
 
 \begin{minted}{Matlab}
 caxis(ax, [1, 100])  % 修改 ax 对象的色值范围为 1 - 100
+\end{minted}
+
+\subsection{如何给\mintinline{Matlab}{bar}加图例等说明性对象}
+
+如\ref{bar_fig_example}所示一个普通的\mintinline{Matlab}{bar}图，如果我们需要加一些修饰，比如图例，坐标轴标题。。。该怎么办？
+
+\begin{figure}
+    \centering
+    \includegraphics[height=10cm]{bar_fig_example.pdf}
+    \caption{默认样式的bar图}
+    \label{bar_fig_example}
+\end{figure}
+
+可以通过传递参数的方式修改坐标轴标题，形如\mintinline{Matlab}{bar(x, y)}。
+
+\begin{minted}{Matlab}
+c = categorical({'apples','pears','oranges'});
+prices = [1.23 0.99 2.3];
+bar(c,prices)
+\end{minted}
+
+当然，还可以修改\mintinline{Matlab}{XTickLabel}的属性值达到修改坐标轴标题的目的。
+
+\begin{minted}{Matlab}
+fig = figure;
+ax = axes;
+ax.XTickLabel = {'Small', 'Big'};
+\end{minted}
+
+修改制定条目的颜色，使条形图使用\mintinline{Matlab}{CData}属性中定义的颜色，然后更改矩阵中的对应行即可更改特定条目的颜色。这个属性可以玩出很多花样，毕竟修改条目颜色就是修改矩阵数值这么简单。
+
+\begin{minted}{Matlab}
+b = bar(rand(10,1));
+b.FaceColor = 'flat';
+b.CData(2,:) = [.5 0 .5];
+\end{minted}
+
+\subsection{如何导出大小和图形窗口大小一致的pdf文件？}
+
+有时候我们想把绘制的图形导出成一个pdf文件，但是发现MATLAB的默认设置使用的是A4纸，图形总是无法铺满的。我们可以将图形和图窗的大小设置为一样，然后调整几个\mintinline{Matlab}{paper}参数为图窗的对应参数，再导出就可以得到与图窗大小一致的pdf或其他图片文件了。
+
+\begin{minted}{Matlab}
+fig.Units = 'points';
+fig.PaperUnits = 'points';
+fig.PaperPositionMode = 'Auto';
+fig.PaperPosition = [0, 0, fig.Position(3:4)];
+fig.PaperSize = fig.Position(3:4);
+print(fig, '-dpdf', 'test');
 \end{minted}
 
 \section{函数！函数！}
