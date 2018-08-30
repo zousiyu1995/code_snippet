@@ -38,9 +38,6 @@
     \setCJKmonofont{Sarasa Term SC}  % FangSong
     \setCJKsansfont{Source Han Sans SC}
 
-%\usepackage{unicode-math}
-%    \setmathfont[math-style = ISO, bold-style = ISO]{TeX Gyre Pagella Math}
-
 \usepackage{geometry}
     \geometry{paper=a4paper,
 %        hmargin = 2cm,
@@ -77,9 +74,28 @@
 }
 
 \usepackage{enumitem}%列表
-    \setlist[itemize]{%
-        nosep,
-        leftmargin=\parindent,
+\setlist[description]{%
+    font=\bfseries\color{blue!40!black},
+    noitemsep,
+    nosep,
+    align=left,
+    leftmargin=!,
+    labelindent=\parindent,
+    labelwidth=20mm,
+    labelsep=1em,
+    itemindent=0mm,
+}
+\setlist[enumerate]{%
+    noitemsep,
+    nosep,
+    leftmargin=0pt,
+    itemindent=*,
+    labelindent=\parindent,
+    listparindent=\parindent,
+}
+\setlist[itemize]{%
+    nosep,
+    leftmargin=\parindent,
 }
 
 %% 图表标题样式
