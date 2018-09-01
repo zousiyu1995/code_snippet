@@ -6,6 +6,8 @@
 
 \mintinline{Matlab}{meshgrid}
 
+\section{MATLAB数据结构}
+
 \section{如何遍历当前文件夹及其子文件夹中的全部文件？}
 
 假设现在我们有这样一个文件夹A，它含有一些文件和子文件夹B、C、D......，这些子文件夹又包含若干层子文件夹。我们需要将这个父文件夹（A）及其子文件夹（B、C、D......）和孙文件夹中的所有文件名和其路径取出来。
@@ -409,6 +411,21 @@ end
 
 Github上找了个现成的工具箱\footnote{\url{https://github.com/FlorentBrunet/image-interpolation-matlab}}，快速实现bicubic和bilinear两种插值算法，效果很不错。
 
-\section{MATLAB数据结构}
 
 \section{优雅的数据流处理}
+
+\section{如何给struct排序？}
+
+\mintinline{Matlab}{struct}是一种非常常见的数据结构，在对其进行操作的过程中免不了要排序，那么我们怎样以一个flied(域)为基准给整个\mintinline{Matlab}{struct}排序呢？
+
+基本思想\footnote{\url{https://blogs.mathworks.com/pick/2010/09/17/sorting-structure-arrays-based-on-fields/}}是先把fields、data从struct里面剥离出来，同时将data转化为\mintinline{Matlab}{cell}数据类型以供排序，使用\mintinline{Matlab}{sortrows}以指定的fields列为标尺进行排序，最后将结果转化为\mintinline{Matlab}{struct}数据类型。如果比较懒的话，直接使用现成的脚本\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/28573-nestedsortstruct}}吧！
+
+\begin{minted}{Matlab}
+st_file_name = dir('*.txt');
+fields_file_name = fieldnames(st_file_name); % extract fields
+cell_file_name = struct2cell(st_file_name)'; % extract data
+cell_file_name = sortrows(cell_file_name, 4, 'descend'); % sort by 4th column
+st_file_name = cell2struct(cell_file_name', fields_file_name);
+\end{minted}
+
+
