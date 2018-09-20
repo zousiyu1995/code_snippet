@@ -40,9 +40,9 @@ MATLAB 2016a及之前的版本dir struct信息并不包含folder，如果返回s
 \subsection*{总结}
 \mintinline{Matlab}{dir()}函数遍历整个F盘共2万余文件文件大约需要1.555823s。我们实现的递归函数遍历F盘文件大约需要3.703009s。慢是慢了点，但我们成功运用了递归解决问题，不是吗？
 
-\section{如何按自然顺序排序字符串？}
+\section{自然顺序排序字符串}
 
-通常，我们会遇到处理一系列文件名有规律的文件的情况，比如：a1.txt、a2.txt ...... a100.txt。但是，当读取文件名到一个cell里后，我们发现文件名往往是乱序排列的，甚至当你使用\mintinline{Matlab}{sort}函数后，排序也不会改变。搜索了一下，在Mathworks File Exchange网站找到了一个自然排序的函数\footnote{\url{https://cn.mathworks.com/matlabcentral/fileexchange/34464-customizable-natural-order-sort}}，感谢作者Stephen Cobeldick。效果如下：
+通常，我们会遇到处理一系列文件名有规律的文件的情况，比如：a1.txt、a2.txt ...... a100.txt。但是，当读取文件名到一个cell里后，我们发现文件名往往是乱序排列的，甚至当你使用\mintinline{Matlab}{sort}函数后，排序也不会改变。搜索了一下，在Mathworks File Exchange网站找到了一个自然排序的函数\mintinline{Matlab}{natsort}\footnote{\url{https://cn.mathworks.com/matlabcentral/fileexchange/34464-customizable-natural-order-sort}}，感谢作者Stephen Cobeldick。效果如下：
 
 \begin{figure}[h]
     \centering
@@ -57,6 +57,10 @@ MATLAB 2016a及之前的版本dir struct信息并不包含folder，如果返回s
         \caption{排序后自然顺序的文件名}
     \end{minipage}
 \end{figure}
+
+另：作者还提供两个额外的函数，用于文件名自然排序的\mintinline{Matlab}{natsortfiles}\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/47434-natural-order-filename-sort}}，用于按行自然排序的\mintinline{Matlab}{natsortrows}\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/47433-natural-order-row-sort}}。
+
+这三个函数都能传入额外的参数，其中最有用的就是传入正则表达式，用以匹配文件名来对结构更复杂字符串进行排序。正则表达式比较复杂，多次匹配不成功都很正常，可以使用该作者\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/48930}}提供的小工具反复检查。
 
 \section{如何隔行取数据？}
 
@@ -427,5 +431,9 @@ cell_file_name = struct2cell(st_file_name)'; % extract data
 cell_file_name = sortrows(cell_file_name, 4, 'descend'); % sort by 4th column
 st_file_name = cell2struct(cell_file_name', fields_file_name);
 \end{minted}
+
+\section{更优雅的颜色表}
+
+仿matplotlib\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/62729-matplotlib-2-0-colormaps-perceptually-uniform-and-beautiful}}。
 
 
