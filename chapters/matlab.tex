@@ -418,6 +418,24 @@ Github上找了个现成的工具箱\footnote{\url{https://github.com/FlorentBru
 
 \section{优雅的数据流处理}
 
+\section{如何更新绘图？}
+
+有时候我们会跟踪一个变量的变化，需要把变量不断地\mintinline{Matlab}{plot}出来。如果是跟踪变量的“轨迹”，即不抹去上一时刻的图形，可以非常简单的使用\mintinline{Matlab}{pause}函数实现；如果需要实实在在更新变量的绘图，可以使用\mintinline{Matlab}{refreshdata}更新绘图数据。
+
+\begin{minted}{Matlab}
+...
+l = plot(X, ObjV, 'b*');
+l.XDataSource = 'X';
+l.YDataSource = 'ObjV';
+
+while something
+    X.update();
+    ObjV.update();
+    pause(0.1);
+    refreshdata
+end
+\end{minted}
+
 \section{如何给struct排序？}
 
 \mintinline{Matlab}{struct}是一种非常常见的数据结构，在对其进行操作的过程中免不了要排序，那么我们怎样以一个flied(域)为基准给整个\mintinline{Matlab}{struct}排序呢？
