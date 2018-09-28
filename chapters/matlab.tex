@@ -436,6 +436,27 @@ while something
 end
 \end{minted}
 
+\section{如何给不断更新的绘图制作gif？}
+
+上一节讲了更新绘图，所以肯定会有导出为动画的需求。顺手写了一个导出gif的函数，传入一个图形对象，控制参数和文件名即可在脚本当前所在目录生成一个gif文件。该函数比较简便，主要利用到\mintinline{Matlab}{imwrite}函数。
+
+\begin{minted}{Matlab}
+function ex_gif(fig, n, filename)
+% Input - figure object
+%       - control parameter
+%       - file name
+frame = getframe(fig);
+im = frame2im(frame);
+[imind, map] = rgb2ind(im, 256);
+% Write to the GIF File
+if n == 1
+    imwrite(imind, map, filename, 'gif', 'Loopcount', inf);
+else
+    imwrite(imind, map, filename, 'gif', 'WriteMode', 'append');
+end
+end
+\end{minted}
+
 \section{如何给struct排序？}
 
 \mintinline{Matlab}{struct}是一种非常常见的数据结构，在对其进行操作的过程中免不了要排序，那么我们怎样以一个flied(域)为基准给整个\mintinline{Matlab}{struct}排序呢？
