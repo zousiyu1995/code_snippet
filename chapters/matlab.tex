@@ -6,6 +6,16 @@
 
 \mintinline{Matlab}{meshgrid}
 
+\section{MATLAB包推荐}
+
+MATLAB相比Python最大的弱点就是没有包管理器，在此收集一些常用的包。
+
+\begin{enumerate}
+    \item MBeautifier，代码格式化包，代码必须要看起来美，哪怕写得很烂，\url{https://github.com/davidvarga/MBeautifier}
+    \item 遗传算法工具箱，比内置的逻辑清晰，可能是我脑回路奇怪，\url{http://codem.group.shef.ac.uk/index.php/ga-toolbox}
+    \item 作者撰写了大量自然排序的工具箱，爱不释手啊，\url{https://www.mathworks.com/matlabcentral/fileexchange/?term=profileid:3102170}
+\end{enumerate}
+
 \section{MATLAB数据结构}
 
 \section{如何遍历当前文件夹及其子文件夹中的全部文件？}
@@ -40,9 +50,9 @@ MATLAB 2016a及之前的版本dir struct信息并不包含folder，如果返回s
 \subsection*{总结}
 \mintinline{Matlab}{dir()}函数遍历整个F盘共2万余文件文件大约需要1.555823s。我们实现的递归函数遍历F盘文件大约需要3.703009s。慢是慢了点，但我们成功运用了递归解决问题，不是吗？
 
-\section{自然顺序排序字符串}
+\section{聊一聊自然排序}
 
-通常，我们会遇到处理一系列文件名有规律的文件的情况，比如：a1.txt、a2.txt ...... a100.txt。但是，当读取文件名到一个cell里后，我们发现文件名往往是乱序排列的，甚至当你使用\mintinline{Matlab}{sort}函数后，排序也不会改变。搜索了一下，在Mathworks File Exchange网站找到了一个自然排序的函数\mintinline{Matlab}{natsort}\footnote{\url{https://cn.mathworks.com/matlabcentral/fileexchange/34464-customizable-natural-order-sort}}，感谢作者Stephen Cobeldick。效果如下：
+通常，我们会遇到处理一系列文件名有规律的文件的情况，比如：a1.txt、a2.txt ...... a100.txt。但是，当读取文件名到一个\mintinline{Matlab}{cell}里后，我们发现文件名往往是乱序排列的，甚至当你使用\mintinline{Matlab}{sort}函数后，排序也不会改变。搜索了一下，在Mathworks File Exchange网站找到了一个自然排序的函数\mintinline{Matlab}{natsort}\footnote{\url{https://cn.mathworks.com/matlabcentral/fileexchange/34464-customizable-natural-order-sort}}，感谢作者Stephen Cobeldick。效果如下：
 
 \begin{figure}[h]
     \centering
@@ -61,6 +71,30 @@ MATLAB 2016a及之前的版本dir struct信息并不包含folder，如果返回s
 另：作者还提供两个额外的函数，用于文件名自然排序的\mintinline{Matlab}{natsortfiles}\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/47434-natural-order-filename-sort}}，用于按行自然排序的\mintinline{Matlab}{natsortrows}\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/47433-natural-order-row-sort}}。
 
 这三个函数都能传入额外的参数，其中最有用的就是传入正则表达式，用以匹配文件名来对结构更复杂字符串进行排序。正则表达式比较复杂，多次匹配不成功都很正常，可以使用该作者\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/48930}}提供的小工具反复检查。
+
+有时候还需要给\mintinline{Matlab}{struct}排序，而显然\mintinline{Matlab}{natsort}函数只能处理\mintinline{Matlab}{cell}数据结构。使用函数的返回值配合一些索引的技巧可以轻易做到给复杂结构体排序。
+
+\begin{minted}{Matlab}
+st_file_name = dir('test/*');
+st_file_name([st_file_name.isdir]) = []; % delete . and .. folder
+% natsort filename
+[~, Index] = natsort({st_file_name.name});
+st_file_name = st_file_name(Index);
+\end{minted}
+
+\section{如何给struct排序？}
+
+\mintinline{Matlab}{struct}是一种非常常见的数据结构，在对其进行操作的过程中免不了要排序，那么我们怎样以一个flied(域)为基准给整个\mintinline{Matlab}{struct}排序呢？
+
+基本思想\footnote{\url{https://blogs.mathworks.com/pick/2010/09/17/sorting-structure-arrays-based-on-fields/}}是先把fields、data从struct里面剥离出来，同时将data转化为\mintinline{Matlab}{cell}数据类型以供排序，使用\mintinline{Matlab}{sortrows}以指定的fields列为标尺进行排序，最后将结果转化为\mintinline{Matlab}{struct}数据类型。如果比较懒的话，直接使用现成的脚本\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/28573-nestedsortstruct}}吧！
+
+\begin{minted}{Matlab}
+st_file_name = dir('*.txt');
+fields_file_name = fieldnames(st_file_name); % extract fields
+cell_file_name = struct2cell(st_file_name)'; % extract data
+cell_file_name = sortrows(cell_file_name, 4, 'descend'); % sort by 4th column
+st_file_name = cell2struct(cell_file_name', fields_file_name);
+\end{minted}
 
 \section{如何隔行取数据？}
 
@@ -457,22 +491,34 @@ end
 end
 \end{minted}
 
-\section{如何给struct排序？}
-
-\mintinline{Matlab}{struct}是一种非常常见的数据结构，在对其进行操作的过程中免不了要排序，那么我们怎样以一个flied(域)为基准给整个\mintinline{Matlab}{struct}排序呢？
-
-基本思想\footnote{\url{https://blogs.mathworks.com/pick/2010/09/17/sorting-structure-arrays-based-on-fields/}}是先把fields、data从struct里面剥离出来，同时将data转化为\mintinline{Matlab}{cell}数据类型以供排序，使用\mintinline{Matlab}{sortrows}以指定的fields列为标尺进行排序，最后将结果转化为\mintinline{Matlab}{struct}数据类型。如果比较懒的话，直接使用现成的脚本\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/28573-nestedsortstruct}}吧！
-
-\begin{minted}{Matlab}
-st_file_name = dir('*.txt');
-fields_file_name = fieldnames(st_file_name); % extract fields
-cell_file_name = struct2cell(st_file_name)'; % extract data
-cell_file_name = sortrows(cell_file_name, 4, 'descend'); % sort by 4th column
-st_file_name = cell2struct(cell_file_name', fields_file_name);
-\end{minted}
 
 \section{更优雅的颜色表}
 
 仿matplotlib\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/62729-matplotlib-2-0-colormaps-perceptually-uniform-and-beautiful}}。
+
+\section{关于箱型图}
+
+统计学上对数据进行分析时，往往需要同时分析数据的诸多方面，如同时显示数据的极值、四分位矩等，箱型图能非常方便展示这些数据，还能揭示数据间的离散程度、异常值、分布差异等。MATLAB中的箱型图函数是\mintinline{Matlab}{boxplot}，不过有一件事情很奇怪，该函数的返回值不是图表对象，而是绘图的数值。该箱型图的本质其实是很多\mintinline{Matlab}{line}对象构成的普通线图，使用\mintinline{Matlab}{handle}函数能很方便地查看\mintinline{Matlab}{boxplot}函数返回的对象数组。所以想要修改默认的箱型图样式，只需要逐个修改这些\mintinline{Matlab}{line}对象，可惜这方法太蠢了，后面再讨论更优雅的办法吧！
+
+\begin{minted}{Matlab}
+load carsmall
+h = boxplot(MPG, Origin);
+h = handle(h)
+\end{minted}
+
+\mintinline{Matlab}{boxplot}有7个返回值，分别是：
+
+\begin{enumerate}
+    \item Upper Whisker
+    \item lower Whisker
+    \item Upper Adjacent value
+    \item Lower Adjacent value
+    \item Box
+    \item Median
+    \item Outliers
+\end{enumerate}
+
+如果想要在同一张箱型图上绘制多个不相容的数据，需要进行分组。先把所有需要统计的数据整理为一行或者一列，同时整理一个相同大小的分组数组，用$ 1, 2, 3 \cdots $进行分组标识。
+
 
 
