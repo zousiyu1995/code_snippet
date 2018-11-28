@@ -1,10 +1,10 @@
 \chapter{MATLAB}
 
-\section{将内置函数背下来}
+\section{内置函数}
 
 在MATLAB中工作时，很多操作其实都是有内置函数的，对MATLAB不熟悉就用不成，然后就“曲线救国”了，效率不高且不说，关键自己实现很费脑！这里收集一些数值计算工作中极其常用的函数。
 
-\mintinline{Matlab}{meshgrid}
+\mcode{meshgrid}
 
 \section{MATLAB包推荐}
 
@@ -18,11 +18,42 @@ MATLAB相比Python最大的弱点就是没有包管理器，在此收集一些�
 
 \section{MATLAB数据结构}
 
+\subsection{table}
+
+\mcode{table}是个很有意思的数据结构，如果不指定行索引，就跟\mcode{struct}类似，指定行索引，就像Excel电子表格了，极为方便。使用时需要声明。
+
+任何数据都能拿来创建\mcode{table}，但是行数必须相同。\mcode{table}含三个方法，\mcode{Properties}，\mcode{Row}，\mcode{Variables}，分别用来查看表的属性、查看行名称、拼接所有数据并以矩阵形式返回。
+
+\begin{minted}{Matlab}
+LastName = {'Sanchez'; 'Johnson'; 'Li'; 'Diaz'; 'Brown'};
+Age = [38; 43; 38; 40; 49];
+Smoker = logical([1; 0; 1; 0; 1]);
+Height = [71; 69; 64; 67; 64];
+Weight = [176; 163; 131; 133; 119];
+BloodPressure = [124, 93; 109, 77; 125, 83; 117, 75; 122, 80];
+
+T = table(Age, Smoker, Height, Weight, BloodPressure);
+\end{minted}
+
+表的列索引是按变量名称默认生成的，当然也可以主动指定。使用\mcode{table}传递参数或者修改名为\mcode{VariableNames}的属性。同样，指定行名称的属性为\mcode{RowNames}，指定名称属性时使用\mcode{cell}或者\mcode{string}数据结构。使用\mcode{join}，\mcode{innerjoin}，\mcode{outerjoin}来合并不同的表。
+
+\subsection{struct}
+
+非常经典的整合不同数据的数据结构。使用时不需要声明，直接用\mcode{.}运算符就能原地创建\mcode{struct}。
+
+\subsection{cell}
+
+使用\mcode{[{}, {}]}合并两个\mcode{cell}，使用\mcode{{{}, {}}}将会创建嵌套的\mcode{cell}。
+
+\subsection{handle}
+
+函数句柄是个相当有用的东西，某种程度上，相当于MATLAB中的指针。
+
 \section{如何遍历当前文件夹及其子文件夹中的全部文件？}
 
 假设现在我们有这样一个文件夹A，它含有一些文件和子文件夹B、C、D......，这些子文件夹又包含若干层子文件夹。我们需要将这个父文件夹（A）及其子文件夹（B、C、D......）和孙文件夹中的所有文件名和其路径取出来。
 
-如果你用的是MATLAB 2016b及更新的版本，那真的太棒了！\mintinline{Matlab}{dir()}函数已经支持遍历搜索了。尝试敲入：
+如果你用的是MATLAB 2016b及更新的版本，那真的太棒了！\mcode{dir()}函数已经支持遍历搜索了。尝试敲入：
 
 \begin{minted}{Matlab}
 dir_data = dir('**/*');
@@ -33,7 +64,7 @@ dir_data([dir_data.isdir]) = [];  % 去除所有.和..文件夹
 
 \subsection*{思考}
 
-对于实现方法\footnote{思路来源：\href{https://stackoverflow.com/questions/2652630/how-to-get-all-files-under-a-specific-directory-in-matlab}{How to get all files under a specific directory in MATLAB?}}，多层次的遍历，我第一时间想到的是递归。然后就是数据的存储了，\mintinline{Matlab}{dir()}函数返回的是一个struct，这个数据结构储存有文件的信息，我们要充分利用这个数据结构。所以现在思路是，写一个递归函数，这个函数返回包含所有文件信息的struct。
+对于实现方法\footnote{思路来源：\href{https://stackoverflow.com/questions/2652630/how-to-get-all-files-under-a-specific-directory-in-matlab}{How to get all files under a specific directory in MATLAB?}}，多层次的遍历，我第一时间想到的是递归。然后就是数据的存储了，\mcode{dir()}函数返回的是一个struct，这个数据结构储存有文件的信息，我们要充分利用这个数据结构。所以现在思路是，写一个递归函数，这个函数返回包含所有文件信息的struct。
 
 这个函数应对先处理父文件夹，获取文件和子文件夹，然后储存文件信息，同时去除子文件夹中的`.'和`..'这两个特殊文件夹。我们对获取的子文件夹再次调用该函数，并储存文件信息。如此，利用递归获取子子孙孙无穷尽文件夹的信息\footnote{其实这并不可能，因为递归是有栈高度限制的，调用函数压入栈，返回函数弹出栈，如果文件夹层次太深，一直压栈就会到达栈溢出警告的极限，例如Python的栈往往是100层，我想MATLAB的栈也大致如此，不会太高}，最后函数返回存储有所有文件信息的struct。现在，你可以对这个结构体做你想做的事情。
 
@@ -48,11 +79,11 @@ MATLAB 2016a及之前的版本dir struct信息并不包含folder，如果返回s
 \inputminted{Matlab}{code/matlab/get_all_file_name_R2016a_older.m}
 
 \subsection*{总结}
-\mintinline{Matlab}{dir()}函数遍历整个F盘共2万余文件文件大约需要1.555823s。我们实现的递归函数遍历F盘文件大约需要3.703009s。慢是慢了点，但我们成功运用了递归解决问题，不是吗？
+\mcode{dir()}函数遍历整个F盘共2万余文件文件大约需要1.555823s。我们实现的递归函数遍历F盘文件大约需要3.703009s。慢是慢了点，但我们成功运用了递归解决问题，不是吗？
 
 \section{聊一聊自然排序}
 
-通常，我们会遇到处理一系列文件名有规律的文件的情况，比如：a1.txt、a2.txt ...... a100.txt。但是，当读取文件名到一个\mintinline{Matlab}{cell}里后，我们发现文件名往往是乱序排列的，甚至当你使用\mintinline{Matlab}{sort}函数后，排序也不会改变。搜索了一下，在Mathworks File Exchange网站找到了一个自然排序的函数\mintinline{Matlab}{natsort}\footnote{\url{https://cn.mathworks.com/matlabcentral/fileexchange/34464-customizable-natural-order-sort}}，感谢作者Stephen Cobeldick。效果如下：
+通常，我们会遇到处理一系列文件名有规律的文件的情况，比如：a1.txt、a2.txt ...... a100.txt。但是，当读取文件名到一个\mcode{cell}里后，我们发现文件名往往是乱序排列的，甚至当你使用\mcode{sort}函数后，排序也不会改变。搜索了一下，在Mathworks File Exchange网站找到了一个自然排序的函数\mcode{natsort}\footnote{\url{https://cn.mathworks.com/matlabcentral/fileexchange/34464-customizable-natural-order-sort}}，感谢作者Stephen Cobeldick。效果如下：
 
 \begin{figure}[h]
     \centering
@@ -68,11 +99,11 @@ MATLAB 2016a及之前的版本dir struct信息并不包含folder，如果返回s
     \end{minipage}
 \end{figure}
 
-另：作者还提供两个额外的函数，用于文件名自然排序的\mintinline{Matlab}{natsortfiles}\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/47434-natural-order-filename-sort}}，用于按行自然排序的\mintinline{Matlab}{natsortrows}\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/47433-natural-order-row-sort}}。
+另：作者还提供两个额外的函数，用于文件名自然排序的\mcode{natsortfiles}\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/47434-natural-order-filename-sort}}，用于按行自然排序的\mcode{natsortrows}\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/47433-natural-order-row-sort}}。
 
 这三个函数都能传入额外的参数，其中最有用的就是传入正则表达式，用以匹配文件名来对结构更复杂字符串进行排序。正则表达式比较复杂，多次匹配不成功都很正常，可以使用该作者\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/48930}}提供的小工具反复检查。
 
-有时候还需要给\mintinline{Matlab}{struct}排序，而显然\mintinline{Matlab}{natsort}函数只能处理\mintinline{Matlab}{cell}数据结构。使用函数的返回值配合一些索引的技巧可以轻易做到给复杂结构体排序。
+有时候还需要给\mcode{struct}排序，而显然\mcode{natsort}函数只能处理\mcode{cell}数据结构。使用函数的返回值配合一些索引的技巧可以轻易做到给复杂结构体排序。
 
 \begin{minted}{Matlab}
 st_file_name = dir('test/*');
@@ -84,9 +115,9 @@ st_file_name = st_file_name(Index);
 
 \section{如何给struct排序？}
 
-\mintinline{Matlab}{struct}是一种非常常见的数据结构，在对其进行操作的过程中免不了要排序，那么我们怎样以一个flied(域)为基准给整个\mintinline{Matlab}{struct}排序呢？
+\mcode{struct}是一种非常常见的数据结构，在对其进行操作的过程中免不了要排序，那么我们怎样以一个flied(域)为基准给整个\mcode{struct}排序呢？
 
-基本思想\footnote{\url{https://blogs.mathworks.com/pick/2010/09/17/sorting-structure-arrays-based-on-fields/}}是先把fields、data从struct里面剥离出来，同时将data转化为\mintinline{Matlab}{cell}数据类型以供排序，使用\mintinline{Matlab}{sortrows}以指定的fields列为标尺进行排序，最后将结果转化为\mintinline{Matlab}{struct}数据类型。如果比较懒的话，直接使用现成的脚本\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/28573-nestedsortstruct}}吧！
+基本思想\footnote{\url{https://blogs.mathworks.com/pick/2010/09/17/sorting-structure-arrays-based-on-fields/}}是先把fields、data从struct里面剥离出来，同时将data转化为\mcode{cell}数据类型以供排序，使用\mcode{sortrows}以指定的fields列为标尺进行排序，最后将结果转化为\mcode{struct}数据类型。如果比较懒的话，直接使用现成的脚本\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/28573-nestedsortstruct}}吧！
 
 \begin{minted}{Matlab}
 st_file_name = dir('*.txt');
@@ -98,7 +129,7 @@ st_file_name = cell2struct(cell_file_name', fields_file_name);
 
 \section{如何隔行取数据？}
 
-闭上眼睛，想象现在有这样一个数组\mintinline{Matlab}{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}，我们要隔一列取一个数据，或者隔两列取一个数据。得益于MATLAB的向量化编程，我们可以很方便的做到，
+闭上眼睛，想象现在有这样一个数组\mcode{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}，我们要隔一列取一个数据，或者隔两列取一个数据。得益于MATLAB的向量化编程，我们可以很方便的做到，
 
 \begin{minted}{Matlab}
 mat_a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -109,7 +140,7 @@ mat_b = mat_a(:, 1:2:length(mat_a));
 
 \section{如何在遍历数组的同时删除被遍历过的元素？}
 
-闭上眼睛，想象现在有这样一个数组\mintinline{Matlab}{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}，我们需要边遍历元素边删除元素。实现方法和Python章节方法一致。
+闭上眼睛，想象现在有这样一个数组\mcode{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}，我们需要边遍历元素边删除元素。实现方法和Python章节方法一致。
 
 \begin{minted}{Matlab}
 mat_a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -125,7 +156,7 @@ end
 
 今天又碰到一个数组操作的问题，同样，如果用一般的方法来解决，代码是很冗长的，向量化操作再次助我一臂之力。
 
-有一个2列的数组\mintinline{Matlab}{all_data}，第一列有正有负，我们称第一列为$ x $，第二列为$ y $。现在需要索引$ x>0 $时对应的$ [x, y] $为一个新的数组\mintinline{Matlab}{a}。并且需要从\mintinline{Matlab}{a}中返回$ y=\min(y) $时所对应的数组$ [x_0, y_0] $。
+有一个2列的数组\mcode{all_data}，第一列有正有负，我们称第一列为$ x $，第二列为$ y $。现在需要索引$ x>0 $时对应的$ [x, y] $为一个新的数组\mcode{a}。并且需要从\mcode{a}中返回$ y=\min(y) $时所对应的数组$ [x_0, y_0] $。
 
 \begin{minted}{Matlab}
 ... ...
@@ -138,7 +169,7 @@ end
 ... ...
 \end{minted}
 
-先谈向量化获取数组\mintinline{Matlab}{a}，利用逻辑索引，保证$ x $全大于0，并取出1、2两列；然后利用\mintinline{Matlab}{find}获取$ y=\min(y) $的行索引；最后利用索引轻松找到需要的数据。可能看起来比较难理解，但是此时再在外面套文件操作的循环等循环操作是不是清晰多了。
+先谈向量化获取数组\mcode{a}，利用逻辑索引，保证$ x $全大于0，并取出1、2两列；然后利用\mcode{find}获取$ y=\min(y) $的行索引；最后利用索引轻松找到需要的数据。可能看起来比较难理解，但是此时再在外面套文件操作的循环等循环操作是不是清晰多了。
 
 \begin{minted}{Matlab}
 a = all_data(all_data(:, 1) > 0, 1:2);
@@ -167,7 +198,7 @@ end
 plot(what_is_i_need(:,2))
 \end{minted}
 
-再来记录一个问题：循环操作里面有一个的2列数组\mintinline{Matlab}{all_data}，每次循环取第一列中与0.5最接近的数据和对应的列，所以该数组大小会不断变，设其维度为$ n\times 2 $。如果$ n<2 $，我们将数据置为0并保存到一个新数组里面去；如果$ n>=2 $，保存其最小值和最大值到新数组里面去。同样，利用向量化操作最大程度减少代码量。
+再来记录一个问题：循环操作里面有一个的2列数组\mcode{all_data}，每次循环取第一列中与0.5最接近的数据和对应的列，所以该数组大小会不断变，设其维度为$ n\times 2 $。如果$ n<2 $，我们将数据置为0并保存到一个新数组里面去；如果$ n>=2 $，保存其最小值和最大值到新数组里面去。同样，利用向量化操作最大程度减少代码量。
 
 \begin{minted}{Matlab}
 pos = [];
@@ -195,7 +226,7 @@ end
 
 \section{文件读取}
 
-\mintinline{Matlab}{csvread}适合读取纯Comma-Separated Values文件，\mintinline{Matlab}{load}适合读取带注释的Comma-Separated Values文件（示例如下），其在读取过程中会自动忽略csv文件的注释。
+\mcode{csvread}适合读取纯Comma-Separated Values文件，\mcode{load}适合读取带注释的Comma-Separated Values文件（示例如下），其在读取过程中会自动忽略csv文件的注释。
 
 \begin{minted}{Matlab}
 % x                       y                        IsoLevel
@@ -207,7 +238,7 @@ end
 
 \section{如何将两个维度不一致的矩阵串联起来？}
 
-现有矩阵\mintinline{Matlab}{a = [1]}和矩阵\mintinline{Matlab}{b = b = [5; 9; 4; 4]}，将其横向拼接成一个矩阵\mintinline{Matlab}{c}，
+现有矩阵\mcode{a = [1]}和矩阵\mcode{b = b = [5; 9; 4; 4]}，将其横向拼接成一个矩阵\mcode{c}，
 
 \begin{minted}{Matlab}
 c = [1, 5;
@@ -216,7 +247,7 @@ c = [1, 5;
     1, 4]
 \end{minted}
 
-思路很简单，因为\mintinline{Matlab}{a}的维度不够，所以将其扩维，然后拼接。
+思路很简单，因为\mcode{a}的维度不够，所以将其扩维，然后拼接。
 
 \begin{minted}{Matlab}
 a = [1];
@@ -227,7 +258,7 @@ c = [repmat(a, r, 1), b];
 
 \section{数组/矩阵去重}
 
-假设现在有一个数组或矩阵，里面包含许多重复的项目，我们需要合并这些重复的项目。MATLAB提供一个名为\mintinline{Matlab}{unique}的函数可以用来去重。很可惜，你用过就会发现，去重后数据的先后顺序乱了（MATLAB给排序了）。借用排序算法的一个概念，这叫不稳定的去重。
+假设现在有一个数组或矩阵，里面包含许多重复的项目，我们需要合并这些重复的项目。MATLAB提供一个名为\mcode{unique}的函数可以用来去重。很可惜，你用过就会发现，去重后数据的先后顺序乱了（MATLAB给排序了）。借用排序算法的一个概念，这叫不稳定的去重。
 
 其实我们可以在去重的同时记录数据第一次出现的位置，然后根据这个位置把去重后的数据再次排序即可。
 
@@ -238,14 +269,14 @@ tmp = load(file_name_str(num).name);
 data = sortrows([pos, data]);
 \end{minted}
 
-最后，忙活了半天，发现\mintinline{Matlab}{unique}函数有一个\mintinline{Matlab}{'stable'}参数实现了稳定的去重，fuck you！这件事情告诉我们，要认真读文档。当然，还是有收获的，起码学会了一个新的函数\mintinline{Matlab}{sortrows}的用法。
+最后，忙活了半天，发现\mcode{unique}函数有一个\mcode{'stable'}参数实现了稳定的去重，fuck you！这件事情告诉我们，要认真读文档。当然，还是有收获的，起码学会了一个新的函数\mcode{sortrows}的用法。
 
 
 \section{颜色的处理}
 
-Hex是一种常用的十六进制颜色码，MATLAB并不能识别，从MathWorks File Exchange找了一个\mintinline{Matlab}{rgb2hex and hex2rgb}的函数\footnote{\url{https://ww2.mathworks.cn/matlabcentral/fileexchange/46289-rgb2hex-and-hex2rgb}}，另，MathWorks File Exchange真特么是个宝库，缺什么找什么，一找一个准。
+Hex是一种常用的十六进制颜色码，MATLAB并不能识别，从MathWorks File Exchange找了一个\mcode{rgb2hex and hex2rgb}的函数\footnote{\url{https://ww2.mathworks.cn/matlabcentral/fileexchange/46289-rgb2hex-and-hex2rgb}}，另，MathWorks File Exchange真特么是个宝库，缺什么找什么，一找一个准。
 
-有时候需要将\mintinline{Matlab}{double}类型的矩阵转换成rgb色值的三维矩阵，没有MATLAB内置函数能做到，在MathWorks File Exchange上找了个\mintinline{Matlab}{double2rgb}函数\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/30264-double2rgb}}可以很方便的做到这一点。
+有时候需要将\mcode{double}类型的矩阵转换成rgb色值的三维矩阵，没有MATLAB内置函数能做到，在MathWorks File Exchange上找了个\mcode{double2rgb}函数\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/30264-double2rgb}}可以很方便的做到这一点。
 
 \section{谈谈MATLAB中的图形对象}
 
@@ -268,7 +299,7 @@ MATLAB的图形系统中常用的对象分为：顶层对象（Root，Figure，A
     \caption{MATLAB中的图形对象}
 \end{figure}
 
-我们重点关注两类对象，顶层对象\mintinline{Matlab}{Root, Figure, Axes}和插图对象\mintinline{Matlab}{Colorbar, Legend}。图形对象相关的函数如\autoref{g_o_identification}所示，用于查找、复制和删除图形对象。这些操作推荐使用面向对象编程的方式进行，代码风格如下。
+我们重点关注两类对象，顶层对象\mcode{Root, Figure, Axes}和插图对象\mcode{Colorbar, Legend}。图形对象相关的函数如\autoref{g_o_identification}所示，用于查找、复制和删除图形对象。这些操作推荐使用面向对象编程的方式进行，代码风格如下。
 
 \begin{minted}{Matlab}
 r = groot;
@@ -278,11 +309,11 @@ c = colorbar;
 lgd = legend('a','b','c');
 \end{minted}
 
-\mintinline{Matlab}{figure}控制图窗窗口的外观和行为，\mintinline{Matlab}{axes}控制绘图区域外观和行为的对象，图表对象（如Bar，Line等）才控制展示数据的图形的外观和行为，这几个关系一定要拎得清。如，你要修改图形窗口的大小和位置，那就改figure对象的属性；如果你要修改坐标轴的线条或者坐标轴标签，就修改axes的属性；最后，改图形内容属性，比如plot线条的粗细，你才需要修改图表对象的属性。MATLAB图形系统的设计层级关系非常明晰，理清关系才能高效进行“码”操作（笑。
+\mcode{figure}控制图窗窗口的外观和行为，\mcode{axes}控制绘图区域外观和行为的对象，图表对象（如Bar，Line等）才控制展示数据的图形的外观和行为，这几个关系一定要拎得清。如，你要修改图形窗口的大小和位置，那就改figure对象的属性；如果你要修改坐标轴的线条或者坐标轴标签，就修改axes的属性；最后，改图形内容属性，比如plot线条的粗细，你才需要修改图表对象的属性。MATLAB图形系统的设计层级关系非常明晰，理清关系才能高效进行“码”操作（笑。
 
 \subsection{格式和注释}
 
-大部分调整图像格式和注释的函数都是直接修改图形对象的属性，从代码可维护性的角度来看，是没必要用这些函数来修改图形的属性的。但是有一些很奇怪的函数调整的不是图像对象的属性，比如\mintinline{Matlab}{caxis}函数用于修改colorbar的色值范围，但是colorbar对象根本没有这个属性，这就卧槽了！有必要单独列出来记一下。
+大部分调整图像格式和注释的函数都是直接修改图形对象的属性，从代码可维护性的角度来看，是没必要用这些函数来修改图形的属性的。但是有一些很奇怪的函数调整的不是图像对象的属性，比如\mcode{caxis}函数用于修改colorbar的色值范围，但是colorbar对象根本没有这个属性，这就卧槽了！有必要单独列出来记一下。
 
 格式和注释分如下几类\footnote{\url{https://ww2.mathworks.cn/help/matlab/formatting-and-annotation.html}}：标题和标签、坐标区外观、颜色图、三维场景控制。
 
@@ -290,22 +321,22 @@ lgd = legend('a','b','c');
 
 \subsection{子图}
 
-\mintinline{Matlab}{subplot}函数可以画子图，有两种调用方式，
+\mcode{subplot}函数可以画子图，有两种调用方式，
 
 \begin{minted}{Matlab}
 subplot(m,n,p)
 subplot('Position',pos)
 \end{minted}
 
-第一种方式是创建一个$ m\times n $的网格，并在第$ p $个网格上绘图；第二种方式是在指定\mintinline{Matlab}{pos}上绘图，座标属性为[left bottom width height]。可以通过查阅图像对象来获取图形属性。
+第一种方式是创建一个$ m\times n $的网格，并在第$ p $个网格上绘图；第二种方式是在指定\mcode{pos}上绘图，座标属性为[left bottom width height]。可以通过查阅图像对象来获取图形属性。
 
-值得注意的是\mintinline{Matlab}{subplot}这个函数创建的是一个\mintinline{Matlab}{axes}对象，所有\mintinline{Matlab}{axes}对象可修改的属性对\mintinline{Matlab}{subplot}都起作用，哦也。
+值得注意的是\mcode{subplot}这个函数创建的是一个\mcode{axes}对象，所有\mcode{axes}对象可修改的属性对\mcode{subplot}都起作用，哦也。
 
 \subsection{最佳实践}
 
 用一个图像对象的关键是搞清楚这个对象属于图像系统中的哪一类主要对象，然后去阅读该类对象的文档，切记，阅读帮助文档是最有效的解决方案。
 
-新版本MATLAB推荐使用调用对象的方式修改图形对象属性，老版本用\mintinline{Matlab}{get, set}函数分别查阅和修改对象属性，或者使用参数传递的方法修改图形对象的属性，没有调用对象的方式优雅。下面的代码展示两种方式的区别。
+新版本MATLAB推荐使用调用对象的方式修改图形对象属性，老版本用\mcode{get, set}函数分别查阅和修改对象属性，或者使用参数传递的方法修改图形对象的属性，没有调用对象的方式优雅。下面的代码展示两种方式的区别。
 
 \begin{minted}{Matlab}
 p = plot(1:10);
@@ -313,7 +344,7 @@ p.Color = 'r';
 set(p, 'Color', 'red');
 \end{minted}
 
-绘图最佳实践的代码风格如下所示，依次建立figure，axes和图表对象（如Bar，Line等），然后使用面向对象编程的方式修改其属性，有些图形属性有多层，此时切勿烦躁，及时使用\mintinline{Matlab}{get()}函数查阅对象属性。坚持使用面向对象编程，代码风格会更加清晰，不宜混乱。实际上，传参和set这两种方式最大的劣势就是不能自动补全，而且写字符串很别扭。
+绘图最佳实践的代码风格如下所示，依次建立figure，axes和图表对象（如Bar，Line等），然后使用面向对象编程的方式修改其属性，有些图形属性有多层，此时切勿烦躁，及时使用\mcode{get()}函数查阅对象属性。坚持使用面向对象编程，代码风格会更加清晰，不宜混乱。实际上，传参和set这两种方式最大的劣势就是不能自动补全，而且写字符串很别扭。
 
 \begin{minted}{Matlab}
 fig = figure;
@@ -328,15 +359,15 @@ colorbar这个对象属于插图对象，要修改的属性常常是位置，阅
 
 怎样用代码修改colorbar的颜色和色值范围呢？这个问题困扰了我很久，一直觉得就是一行代码的事，果然不错，见官方文档\footnote{\url{https://ww2.mathworks.cn/help/matlab/ref/caxis.html}}！
 
-\mintinline{Matlab}{caxis(target, [min max])}函数接受两个对象，目标对象可以是一个axes或者figure对象。
+\mcode{caxis(target, [min max])}函数接受两个对象，目标对象可以是一个axes或者figure对象。
 
 \begin{minted}{Matlab}
 caxis(ax, [1, 100])  % 修改 ax 对象的色值范围为 1 - 100
 \end{minted}
 
-\subsection{如何给\mintinline{Matlab}{bar}加图例等说明性对象}
+\subsection{如何给\mcode{bar}加图例等说明性对象}
 
-如\ref{bar_fig_example}所示一个普通的\mintinline{Matlab}{bar}图，如果我们需要加一些修饰，比如图例，坐标轴标题。。。该怎么办？
+如\ref{bar_fig_example}所示一个普通的\mcode{bar}图，如果我们需要加一些修饰，比如图例，坐标轴标题。。。该怎么办？
 
 \begin{figure}
     \centering
@@ -345,7 +376,7 @@ caxis(ax, [1, 100])  % 修改 ax 对象的色值范围为 1 - 100
     \label{bar_fig_example}
 \end{figure}
 
-可以通过传递参数的方式修改坐标轴标题，形如\mintinline{Matlab}{bar(x, y)}。
+可以通过传递参数的方式修改坐标轴标题，形如\mcode{bar(x, y)}。
 
 \begin{minted}{Matlab}
 c = categorical({'apples','pears','oranges'});
@@ -353,7 +384,7 @@ prices = [1.23 0.99 2.3];
 bar(c,prices)
 \end{minted}
 
-当然，还可以修改\mintinline{Matlab}{XTickLabel}的属性值达到修改坐标轴标题的目的。
+当然，还可以修改\mcode{XTickLabel}的属性值达到修改坐标轴标题的目的。
 
 \begin{minted}{Matlab}
 fig = figure;
@@ -361,7 +392,7 @@ ax = axes;
 ax.XTickLabel = {'Small', 'Big'};
 \end{minted}
 
-修改制定条目的颜色，使条形图使用\mintinline{Matlab}{CData}属性中定义的颜色，然后更改矩阵中的对应行即可更改特定条目的颜色。这个属性可以玩出很多花样，毕竟修改条目颜色就是修改矩阵数值这么简单。
+修改制定条目的颜色，使条形图使用\mcode{CData}属性中定义的颜色，然后更改矩阵中的对应行即可更改特定条目的颜色。这个属性可以玩出很多花样，毕竟修改条目颜色就是修改矩阵数值这么简单。
 
 \begin{minted}{Matlab}
 b = bar(rand(10,1));
@@ -371,7 +402,7 @@ b.CData(2,:) = [.5 0 .5];
 
 \subsection{如何导出大小和图形窗口大小一致的pdf文件？}
 
-有时候我们想把绘制的图形导出成一个pdf文件，但是发现MATLAB的默认设置使用的是A4纸，图形总是无法铺满的。我们可以将图形和图窗的大小设置为一样，然后调整几个\mintinline{Matlab}{paper}参数为图窗的对应参数，再导出就可以得到与图窗大小一致的pdf或其他图片文件了。
+有时候我们想把绘制的图形导出成一个pdf文件，但是发现MATLAB的默认设置使用的是A4纸，图形总是无法铺满的。我们可以将图形和图窗的大小设置为一样，然后调整几个\mcode{paper}参数为图窗的对应参数，再导出就可以得到与图窗大小一致的pdf或其他图片文件了。
 
 \begin{minted}{Matlab}
 fig.Units = 'points';
@@ -384,18 +415,18 @@ print(fig, '-dpdf', 'test');
 
 \section{函数最佳实践}
 
-这里收集几个关于函数的最佳实践，首先是函数的返回值问题。很多时候，MATLAB函数的返回值不止一个，通常让变量一一返回，在外部使用变量一一接收。最佳做法是将需要返回的变量装入\mintinline{Matlab}{struct}中，这样在外部仅使用一个变量就能接收所有返回值。
+这里收集几个关于函数的最佳实践，首先是函数的返回值问题。很多时候，MATLAB函数的返回值不止一个，通常让变量一一返回，在外部使用变量一一接收。最佳做法是将需要返回的变量装入\mcode{struct}中，这样在外部仅使用一个变量就能接收所有返回值。
 
 \section{关于路径地一切}
 
 处理数据肯定要读取文件，那么就免不了要处理路径，这里记录一下关于路径处理的最佳实践。
 
 \begin{enumerate}
-    \item 拼接路径时最好使用内置函数\mintinline{Matlab}{fullfile}，而不是手动拼接字符串；
-    \item 使用\mintinline{Matlab}{isfile, isfolder}对输入的文件进行异常检查；
-    \item 使用\mintinline{Matlab}{fileparts}函数分割路径，
-    \item 如果需要手动插入路径分割符，务必使用\mintinline{Matlab}{filesep}函数，其在不同系统上有不同表现形式，用户不需要为跨平台而进行特殊处理；
-    \item \mintinline{Matlab}{dir}函数是人类的好朋友；
+    \item 拼接路径时最好使用内置函数\mcode{fullfile}，而不是手动拼接字符串；
+    \item 使用\mcode{isfile, isfolder}对输入的文件进行异常检查；
+    \item 使用\mcode{fileparts}函数分割路径，
+    \item 如果需要手动插入路径分割符，务必使用\mcode{filesep}函数，其在不同系统上有不同表现形式，用户不需要为跨平台而进行特殊处理；
+    \item \mcode{dir}函数是人类的好朋友；
 \end{enumerate}
 
 \begin{minted}{Matlab}
@@ -445,7 +476,7 @@ end
 
 \url{http://cs.nju.edu.cn/liyf/dip15/dip.htm}
 
-常用的是MATLAB内置的\mintinline{Matlab}{interp2}函数，
+常用的是MATLAB内置的\mcode{interp2}函数，
 
 Github上找了个现成的工具箱\footnote{\url{https://github.com/FlorentBrunet/image-interpolation-matlab}}，快速实现bicubic和bilinear两种插值算法，效果很不错。
 
@@ -454,7 +485,7 @@ Github上找了个现成的工具箱\footnote{\url{https://github.com/FlorentBru
 
 \section{如何更新绘图？}
 
-有时候我们会跟踪一个变量的变化，需要把变量不断地\mintinline{Matlab}{plot}出来。如果是跟踪变量的“轨迹”，即不抹去上一时刻的图形，可以非常简单的使用\mintinline{Matlab}{pause}函数实现；如果需要实实在在更新变量的绘图，可以使用\mintinline{Matlab}{refreshdata}更新绘图数据。
+有时候我们会跟踪一个变量的变化，需要把变量不断地\mcode{plot}出来。如果是跟踪变量的“轨迹”，即不抹去上一时刻的图形，可以非常简单的使用\mcode{pause}函数实现；如果需要实实在在更新变量的绘图，可以使用\mcode{refreshdata}更新绘图数据。
 
 \begin{minted}{Matlab}
 ...
@@ -472,7 +503,7 @@ end
 
 \section{如何给不断更新的绘图制作gif？}
 
-上一节讲了更新绘图，所以肯定会有导出为动画的需求。顺手写了一个导出gif的函数，传入一个图形对象，控制参数和文件名即可在脚本当前所在目录生成一个gif文件。该函数比较简便，主要利用到\mintinline{Matlab}{imwrite}函数。
+上一节讲了更新绘图，所以肯定会有导出为动画的需求。顺手写了一个导出gif的函数，传入一个图形对象，控制参数和文件名即可在脚本当前所在目录生成一个gif文件。该函数比较简便，主要利用到\mcode{imwrite}函数。
 
 \begin{minted}{Matlab}
 function ex_gif(fig, n, filename)
@@ -498,7 +529,7 @@ end
 
 \section{关于箱型图}
 
-统计学上对数据进行分析时，往往需要同时分析数据的诸多方面，如同时显示数据的极值、四分位矩等，箱型图能非常方便展示这些数据，还能揭示数据间的离散程度、异常值、分布差异等。MATLAB中的箱型图函数是\mintinline{Matlab}{boxplot}，不过有一件事情很奇怪，该函数的返回值不是图表对象，而是绘图的数值。该箱型图的本质其实是很多\mintinline{Matlab}{line}对象构成的普通线图，使用\mintinline{Matlab}{handle}函数能很方便地查看\mintinline{Matlab}{boxplot}函数返回的对象数组。所以想要修改默认的箱型图样式，只需要逐个修改这些\mintinline{Matlab}{line}对象，可惜这方法太蠢了，后面再讨论更优雅的办法吧！
+统计学上对数据进行分析时，往往需要同时分析数据的诸多方面，如同时显示数据的极值、四分位矩等，箱型图能非常方便展示这些数据，还能揭示数据间的离散程度、异常值、分布差异等。MATLAB中的箱型图函数是\mcode{boxplot}，不过有一件事情很奇怪，该函数的返回值不是图表对象，而是绘图的数值。该箱型图的本质其实是很多\mcode{line}对象构成的普通线图，使用\mcode{handle}函数能很方便地查看\mcode{boxplot}函数返回的对象数组。所以想要修改默认的箱型图样式，只需要逐个修改这些\mcode{line}对象，可惜这方法太蠢了，后面再讨论更优雅的办法吧！
 
 \begin{minted}{Matlab}
 load carsmall
@@ -506,7 +537,7 @@ h = boxplot(MPG, Origin);
 h = handle(h)
 \end{minted}
 
-\mintinline{Matlab}{boxplot}有7个返回值，分别是：
+\mcode{boxplot}有7个返回值，分别是：
 
 \begin{enumerate}
     \item Upper Whisker
@@ -518,7 +549,20 @@ h = handle(h)
     \item Outliers
 \end{enumerate}
 
-如果想要在同一张箱型图上绘制多个不相容的数据，需要进行分组。先把所有需要统计的数据整理为一行或者一列，同时整理一个相同大小的分组数组，用$ 1, 2, 3 \cdots $进行分组标识。
+如果想要在同一张箱型图上绘制多个不相容的数据，需要进行分组。先把所有需要统计的数据整理为一行或者一列，同时整理一个相同大小的分组数组，用$ 1, 2, 3 \cdots $或者字符类型的数组进行分组标识。下面时一个例子。
+
+\begin{minted}{Matlab}
+A = [16, 20, 15, 17, 22, 19, 17]';
+B = [22, 15, 16, 16, 16, 18]';
+C = [23, 9, 15, 18, 13, 27, 17, 14, 16, 15, 21, 19, 17]';
+
+group = [ones(size(A)); ...
+2 * ones(size(B)); ...
+3 * ones(size(C))];
+
+figure();
+boxplot([A; B; C], group)
+\end{minted}
 
 
 

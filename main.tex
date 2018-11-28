@@ -12,22 +12,11 @@
 %% 中文文字处理
 \colorlet{title}{blue!40!black}
 \usepackage[heading = true]{ctex}
-    \ctexset{today = old}
-    \pagestyle{plain}  % 自定义板式
-    %% 标题设置
     \ctexset{
-        chapter = {
-            pagestyle = chapterpage,
-        },
         section = {
-            format = \bf\raggedright\color{title}\zihao{4},
-            numberformat = \rmfamily,
-            number = \arabic{section},
-        },
-        subsection = {
-            format = \rmfamily\heiti\raggedright\color{title}\zihao{5},
-        },
-    }%
+            format = \bf\raggedright,
+        }
+    }
 
 %% 字体设置
 \usepackage{fontspec}
@@ -52,19 +41,7 @@
     \usemintedstyle{colorful}  % 高亮主题
     \setminted{bgcolor=bg, breaklines=true}
 
-%% 页眉页脚
-\usepackage{fancyhdr}
-\pagestyle{fancy}
-    \fancyhead{}
-        \lhead{\kaishu\nouppercase{\leftmark}}
-        \rhead{\thepage}
-    \fancyfoot{}
-% 章标题所在页专用版式
-\fancypagestyle{chapterpage}{%
-    \chead{\slshape\leftmark}
-    \lhead{\sffamily 代码笔记本}
-    \rhead{\thepage}
-}
+\newcommand{\mcode}[1]{\mintinline{Matlab}{#1}}
 
 %% 脚注，带圈数字，刘海洋，可以超过10
 \usepackage{xunicode-addon}
@@ -99,21 +76,6 @@
     leftmargin=\parindent,
 }
 
-%% 图表标题样式
-\usepackage[hypcap=true,hypcapspace=1cm]{caption}
-\captionsetup[figure]{%
-    labelsep=quad,
-    justification=centering,
-    labelfont=bf,
-    textfont={sf,color=title},
-}%
-\captionsetup[table]{%
-    labelsep=quad,
-    justification=centering,
-    labelfont=bf,
-    textfont={sf,color=title},
-}%
-
 %% 超链接
 \usepackage{hyperref}
     \hypersetup{%
@@ -130,8 +92,8 @@
     %定制pdf属性
     \hypersetup{%
         pdftitle={代码笔记本},
-        pdfauthor={邹思宇 zousiyu},
-        pdfkeywords={LaTeX, PGFplot, Tikz, MATLAB, C, C++, Python},
+        pdfauthor={zousiyu},
+        pdfkeywords={LaTeX, PGFplot, Tikz, MATLAB, C, C++, Python, algorithm},
         pdfstartview=Fit,%整个页面适合窗口
         pdfcreator={XeLaTeX \& TeXStudio}
     }%
