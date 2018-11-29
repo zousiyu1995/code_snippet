@@ -2,13 +2,13 @@
 
 \section{如何展开一个嵌套的序列？}
 
-我们现在有这样一个序列\mintinline{python}{items = [1, 2, [3, 4, [5, 6, [9, 8], 7], 8]]}，我们想逐级展开这个序列，然后将所有元素装入一个序列。
+我们现在有这样一个序列\pycode{items = [1, 2, [3, 4, [5, 6, [9, 8], 7], 8]]}，我们想逐级展开这个序列，然后将所有元素装入一个序列。
 
-如果这个序列层级较少，我们可以用多层\mintinline{python}{for}循环来遍历这个序列。一旦这个序列超过3层，过多的循环会让你很头疼。同样，这种多层级的问题我们可以用\textbf{递归}来解决。构建一个函数，这个函数能处理第一层的元素，由于第二层是\mintinline{python}{list}，它是一个可迭代对象，我们只需要判断第二层是不是可迭代对象，同时忽略\mintinline{python}{str, bytes}对象\footnote{\mintinline{python}{str, bytes}也是可迭代对象，我们要避免其展开成单个字符。}。只要内层是可迭代的，我们就开始递归，对其应用该函数。
+如果这个序列层级较少，我们可以用多层\pycode{for}循环来遍历这个序列。一旦这个序列超过3层，过多的循环会让你很头疼。同样，这种多层级的问题我们可以用\textbf{递归}来解决。构建一个函数，这个函数能处理第一层的元素，由于第二层是\pycode{list}，它是一个可迭代对象，我们只需要判断第二层是不是可迭代对象，同时忽略\pycode{str, bytes}对象\footnote{\pycode{str, bytes}也是可迭代对象，我们要避免其展开成单个字符。}。只要内层是可迭代的，我们就开始递归，对其应用该函数。
 
 \inputminted{python}{code/python/unfold.py}
 
-由于存在递归，所以函数会被调用很多次，每次调用所得的数据都需要保留，如何在多次的调用之间共享保留数据呢？我采用一个默认参数来实现\footnote{前几天没有回想起list有个extend方法，显然用extend方法来实现更加优雅}，首次调用时不给默认参数新值，这会产生一个空的\mintinline{python}{list}，当对内层对象调用时，将上一次产生的数据赋值给这个参数。输出结果：
+由于存在递归，所以函数会被调用很多次，每次调用所得的数据都需要保留，如何在多次的调用之间共享保留数据呢？我采用一个默认参数来实现\footnote{前几天没有回想起list有个extend方法，显然用extend方法来实现更加优雅}，首次调用时不给默认参数新值，这会产生一个空的\pycode{list}，当对内层对象调用时，将上一次产生的数据赋值给这个参数。输出结果：
 
 \begin{minted}{python}
 >>> items1 = ['Paula', ['Thomas', 'Lewis', ['siyu', 'ziyan', ['jianyuan']]]]
@@ -26,7 +26,7 @@
 
 \inputminted{python}{code/python/unfold_generator.py}
 
-使用generator一来能防止内存爆炸，二来不需要在函数的多次调用见传递数据，代码更清晰明朗。需要注意，generator是惰性序列，边调用边计算，我们需要使用\mintinline{python}{for}迭代出每一个元素或者直接用\mintinline{python}{list()}获取全部元素。
+使用generator一来能防止内存爆炸，二来不需要在函数的多次调用见传递数据，代码更清晰明朗。需要注意，generator是惰性序列，边调用边计算，我们需要使用\pycode{for}迭代出每一个元素或者直接用\pycode{list()}获取全部元素。
 
 \begin{minted}{python}
 items1 = ['Paula', ['Thomas', 'Lewis', ['siyu', 'ziyan', ['jianyuan']]]]
@@ -45,7 +45,7 @@ print(list(unfold(items3)))
 
 \section{如何在遍历list时删除元素？}
 
-存在一个list\_a = [1, 2, 3, 4, 5, 6, 7, 8, 9]，现在需要逐一操作内部元素，并在操作结束之后删除它。使用\mintinline{python}{while}判断\mintinline{python}{list}是否为空，不为空则\mintinline{python}{pop}第一个元素，在循环下依次操作每一个元素。
+存在一个list\_a = [1, 2, 3, 4, 5, 6, 7, 8, 9]，现在需要逐一操作内部元素，并在操作结束之后删除它。使用\pycode{while}判断\pycode{list}是否为空，不为空则\pycode{pop}第一个元素，在循环下依次操作每一个元素。
 
 \begin{minted}{python}
 list_a = [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -61,7 +61,7 @@ while list_a:
 
 \textbf{脚本所在目录}
 
-一般情况，如果你在当前目录启动python，你可以使用\mintinline{python}{'.'}或者\mintinline{python}{os.getcwd()}获取脚本所在目录（也就是当前目录）。但是，如果python不从当前目录启动，此法就很有风险（逃）。所有要坚定不移地使用如下这种优雅的方式获取脚本所在的\textbf{绝对路径}。
+一般情况，如果你在当前目录启动python，你可以使用\pycode{'.'}或者\pycode{os.getcwd()}获取脚本所在目录（也就是当前目录）。但是，如果python不从当前目录启动，此法就很有风险（逃）。所有要坚定不移地使用如下这种优雅的方式获取脚本所在的\textbf{绝对路径}。
 
 \begin{minted}{python}
 import os
@@ -71,7 +71,7 @@ current_path = os.path.split(os.path.abspath(__file__))[0]
 
 \textbf{获取指定文件类型的文件的路径}
 
-听起来很绕口，就是说如果你只想获取一个目录里面的pdf文件，该怎么办？遇到问题一定要不假思索，直接查阅python库（人生苦短）。\mintinline{python}{walk}函数可以很方便的遍历目录，\mintinline{python}{splitext}可以把扩展名分开，再加个判断，并注意合并成绝对路径哦，最后不要忘记使用优雅的生成器，哦耶！
+听起来很绕口，就是说如果你只想获取一个目录里面的pdf文件，该怎么办？遇到问题一定要不假思索，直接查阅python库（人生苦短）。\pycode{walk}函数可以很方便的遍历目录，\pycode{splitext}可以把扩展名分开，再加个判断，并注意合并成绝对路径哦，最后不要忘记使用优雅的生成器，哦耶！
 
 \begin{minted}{python}
 import os
@@ -92,7 +92,13 @@ file_name = list(get_designated_file_name(current_path, '.pdf'))
 
 \subsection{pathlib}
 
-\mintinline{python}{os}库就一个特点，用起来非常过程式，而且比较繁琐，完全没有爽快感。
+\pycode{os}库就一个特点，用起来非常过程式，而且比较繁琐，完全没有爽快感。
+
+\subsection{实例1，添加父文件夹名到文件名}
+
+首先提取父文件夹名到\pycode{list}，然后遍历每个文件夹内的文件，对文件名的字符串进行处理后，使用\pycode{os.rename}重命名。
+
+\inputminted{python}{code/python/rename_case.py}
 
 \section{面向对象最佳实践}
 

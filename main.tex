@@ -14,7 +14,7 @@
 \usepackage[heading = true]{ctex}
     \ctexset{
         section = {
-            format = \bf\raggedright,
+            format = \bf\raggedright\zihao{4},
         }
     }
 
@@ -42,6 +42,7 @@
     \setminted{bgcolor=bg, breaklines=true}
 
 \newcommand{\mcode}[1]{\mintinline{Matlab}{#1}}
+\newcommand{\pycode}[1]{\mintinline{python}{#1}}
 
 %% 脚注，带圈数字，刘海洋，可以超过10
 \usepackage{xunicode-addon}
