@@ -86,6 +86,8 @@ current_path = os.path.split(os.path.abspath(__file__))[0]
 file_name = list(get_designated_file_name(current_path, '.pdf'))
 \end{minted}
 
+\subsection{实例：遍历文件夹内的PDF文件并提取第一页合并}
+
 结合路径处理来个实例，我们要处理某个路径（本例是脚本运行目录下的）下的所有pdf文件，遍历所有文件并把第一页提取出来合并成一个单独的pdf文件。我们需要注意如下几点：遍历pdf文件时跳过上次输出的文件；避免意外，全部转化为绝对路径处理。
 
 \inputminted{python}{code/python/treat_pdf.py}
@@ -94,11 +96,21 @@ file_name = list(get_designated_file_name(current_path, '.pdf'))
 
 \pycode{os}库就一个特点，用起来非常过程式，而且比较繁琐，完全没有爽快感。
 
-\subsection{实例1，添加父文件夹名到文件名}
+\subsection{实例：添加父文件夹名到文件名}
 
 首先提取父文件夹名到\pycode{list}，然后遍历每个文件夹内的文件，对文件名的字符串进行处理后，使用\pycode{os.rename}重命名。
 
 \inputminted{python}{code/python/rename_case.py}
+
+\section{图像处理}
+
+一般都用\pycode{Pillow}库，面向对象，简单实用。
+
+\subsection{实例：给图片添加文字}
+
+我在给Fluent后处理的时候，由于数据量十分庞大，边计算边保存case以便后处理是不可能的，只能边计算边输出图片，然后后处理成动画。但是Fluent输出的图片没有当前时间，只能手动网上加了。核心功能由\pycode{ImageDraw}这个类提供。
+
+\inputminted{python}{code/python/add_time_text.py}
 
 \section{面向对象最佳实践}
 
