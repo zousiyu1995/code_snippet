@@ -1,4 +1,5 @@
 import os
+import shutil
 
 par_dirs = [name for name in os.listdir('.') if os.path.isdir(name)]
 
@@ -19,6 +20,7 @@ def rename(par_dir):
         newname = os.path.join(par_dir, newname)
         oldname = os.path.join(par_dir, video_file)
         os.rename(oldname, newname)
+        shutil.move(newname, '.')
 
 
 for par_dir in par_dirs:

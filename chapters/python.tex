@@ -45,7 +45,7 @@ print(list(unfold(items3)))
 
 \section{如何在遍历list时删除元素？}
 
-存在一个list\_a = [1, 2, 3, 4, 5, 6, 7, 8, 9]，现在需要逐一操作内部元素，并在操作结束之后删除它。使用\pycode{while}判断\pycode{list}是否为空，不为空则\pycode{pop}第一个元素，在循环下依次操作每一个元素。
+存在一个\pycode{list_a = [1, 2, 3, 4, 5, 6, 7, 8, 9]}，现在需要逐一操作内部元素，并在操作结束之后删除它。使用\pycode{while}判断\pycode{list}是否为空，不为空则\pycode{pop}第一个元素，在循环下依次操作每一个元素。
 
 \begin{minted}{python}
 list_a = [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -53,6 +53,23 @@ list_a = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 while list_a:
     temp = list_a.pop(0)
     print(temp)
+\end{minted}
+
+\section{字符串的处理}
+
+\subsection{字符串自然排序}
+
+自然排序库，\url{https://github.com/SethMMorton/natsort}。
+
+\begin{minted}{python}
+>>> a = ['2 ft 7 in', '1 ft 5 in', '10 ft 2 in', '2 ft 11 in', '7 ft 6 in']
+>>> sorted(a)
+['1 ft 5 in', '10 ft 2 in', '2 ft 11 in', '2 ft 7 in', '7 ft 6 in']
+
+>>> from natsort import natsorted
+>>> a = ['2 ft 7 in', '1 ft 5 in', '10 ft 2 in', '2 ft 11 in', '7 ft 6 in']
+>>> natsorted(a)
+['1 ft 5 in', '2 ft 7 in', '2 ft 11 in', '7 ft 6 in', '10 ft 2 in']
 \end{minted}
 
 \section{关于路径的一切}
@@ -112,9 +129,58 @@ file_name = list(get_designated_file_name(current_path, '.pdf'))
 
 \inputminted{python}{code/python/add_time_text.py}
 
-\section{面向对象最佳实践}
+\section{最佳实践}
+
+\subsection{代码的模块化}
+
+要「模块化」就要分割代码。模块其实是一个逻辑层面的定义。它是说：如果一个东西，它有定义良好的输入和输出，那么它就是一个模块。例如一个定义良好的函数是一个模块；因为它接受固定格式的输入（函数参数），根据固定逻辑产出输出。
+
+撰写模块化代码遵循三个原则：
+
+\begin{enumerate}
+    \item 单一职责：设计函数时，最好让函数的职责足够简单，只有一个；
+    \item 输入决定（input dominated）：设计函数时，尽可能使函数的行为完全由其输入参数决定。特别地，尽可能不要让函数的行为受到全局变量、类的成员变量的取值影响。某种意义上，这和「可重入」的概念比较像；
+    \item 自我限制：不写超过 50 行的代码；不超过 5 行的通用功能也要拉出去做工具函数。
+\end{enumerate}
+
 
 \section{matplotlib最佳实践}
 \subsection{生成矢量图}
+
+\section{并行执行shell命令}
+
+最近接管了一台高性能Linux集群，root权限在手，终于能为所欲为了。这台服务器有1个管理节点，13个计算节点。管理节点的\shcode{/opt/}是共享的，计算节点通过访问这个目录获取计算程序。所以其他非共享目录的程序是各个节点独有的，比如\shcode{top}。如此，就没办法在管理节点通过\shcode{shell}程序获取全部节点的cpu使用情况。我始终还不是专业人士，技术还没有学到家，一时也不知如何方便获取各个节点cpu占用率等信息。所以平时想看节点有没有人在计算，就只能一个个节点登陆，然后查看。
+
+最近在网上搜了一圈，发现有个技术叫Parallel SSH。人生苦短，马上加上Python这个关键字搜索相应的库。在Github上找到了一个最近一直在更新，star和fork数量也合格的库，~\href{https://github.com/ParallelSSH/parallel-ssh}{parallel-ssh}~。例子给得很直观，毫不费力就能仿制一个程序。接下来考虑如何方便地获取cpu占用率，随便搜索一下，发现~\href{https://github.com/giampaolo/psutil}{psutil}~是这方面最出名的库。将最难的部分，并行执行shell命令和获取cpu占用率交给库后，很轻易就能写出同时获取所有节点cpu占用率的脚本。
+
+如下，是并行执行shell的脚本\pycode{parallel_ex_shell.py}。需要注意处理的是，代码中获取cpu占用率脚本\pycode{get_cpu_info.py}的路径最好使用绝对路径完全定位脚本位置。
+
+\inputminted{python}{code/python/parallel_ex_shell.py}
+
+这里获取的是某一段时间内cpu占用率的平均值。
+
+\inputminted{python}{code/python/get_cpu_info.py}
+
+输出如下：
+
+\begin{minted}{shell}
+cu01 : 100
+cu02 : 5
+cu03 : 0
+cu04 : 0
+cu05 : 0
+cu06 : 59
+cu07 : 98
+cu08 : 0
+cu09 : 0
+cu10 : 92
+cu11 : 0
+cu12 : 90
+cu13 : 0
+\end{minted}
+
+开心！同样，仿造这两个库的例子还能写出其他东西。
+
+\section{协助ffmpeg进行批量字幕压制}
 
 
