@@ -183,4 +183,12 @@ cu13 : 0
 
 \section{协助ffmpeg进行批量字幕压制}
 
+之前看过很多视频教程（英文的），但不想丢掉，于是想把字幕压进去收藏起来，同时也上传到哔哩哔哩分享给网友。简单Google一下发现ffmpeg能很方便压制字幕，就一条命令\footnote{\url{https://trac.ffmpeg.org/wiki/HowToBurnSubtitlesIntoVideo}}。
 
+\begin{minted}{shell}
+ffmpeg -i video.avi -vf "ass=subtitle.ass" out.avi
+\end{minted}
+
+在视频文件很多的情况下，我们借助Python来辅助批量压制字幕。代码如下：
+
+\inputminted{python}{code/python/batch_burn.py}

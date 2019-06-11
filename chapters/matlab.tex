@@ -127,6 +127,14 @@ cell_file_name = sortrows(cell_file_name, 4, 'descend'); % sort by 4th column
 st_file_name = cell2struct(cell_file_name', fields_file_name);
 \end{minted}
 
+2019年6月11日更新：最近发现一种更简单、更优雅的方法\footnote{\url{https://www.mathworks.com/matlabcentral/answers/389300-how-to-nat-sort-rows-of-a-struct}}，故上述的方法可以作废了。新方法的基本思路是：利用\mcode{sort}函数获取排序的索引，而不是结果；然后直接利用该索引对\mcode{struct}中的数据进行索引，完成排序。
+
+\begin{minted}{matlab}
+FileList = dir(fullfile(Folder, '*.*'));
+[~, Index] = natsort({FileList.name});
+FileList = FileList(Index);
+\end{minted}
+
 \section{如何隔行取数据？}
 
 闭上眼睛，想象现在有这样一个数组\mcode{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}，我们要隔一列取一个数据，或者隔两列取一个数据。得益于MATLAB的向量化编程，我们可以很方便的做到，
